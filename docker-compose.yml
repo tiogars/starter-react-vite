@@ -1,0 +1,7 @@
+name: starter-react-vite-test
+
+services:
+  app:
+    image: starter-react-vite
+    ports:
+      - "8080:80"
