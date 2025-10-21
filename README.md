@@ -10,9 +10,9 @@ pnpm approve-builds
 
 pnpm add @mui/material @emotion/react @emotion/styled react-router @reduxjs/toolkit react-redux @mui/icons-material @fontsource/roboto @mui/x-data-grid @mui/x-date-pickers luxon  react-hook-form
 
-pnpm add -D vitest @vitest/browser playwright
+pnpm add -D vitest @vitest/coverage-v8 @testing-library/react @testing-library/jest-dom jsdom @testing-library/user-event @vitest/browser playwright
 
-pnpm exec playwright install 
+pnpm exec playwright install
 ```
 
 ## React + TypeScript + Vite
@@ -87,4 +87,24 @@ export default defineConfig([
     },
   },
 ])
+```
+
+## Testing
+
+Run the unit tests with Vitest:
+
+```bash
+pnpm test
+```
+
+Watch mode for a fast feedback loop:
+
+```bash
+pnpm test:watch
+```
+
+Generate a coverage report (text + HTML in `coverage/`):
+
+```bash
+pnpm test:coverage
 ```
