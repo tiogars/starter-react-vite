@@ -21,32 +21,32 @@ export const FeaturesPage = () => {
   const features = [
     {
       title: 'Easy to Use',
-      description: 'Interface intuitive et simple à prendre en main',
+      description: 'Intuitive interface that is simple to get started with',
       icon: <CheckCircleIcon color="primary" />,
     },
     {
       title: 'Responsive Design',
-      description: 'Adapté à tous les écrans : mobile, tablette et desktop',
+      description: 'Adapted to all screens: mobile, tablet and desktop',
       icon: <DevicesIcon color="primary" />,
     },
     {
       title: 'Customizable Components',
-      description: 'Composants Material-UI personnalisables et modulaires',
+      description: 'Customizable and modular Material-UI components',
       icon: <PaletteIcon color="primary" />,
     },
     {
       title: 'React Router Integration',
-      description: 'Navigation fluide avec React Router v7',
+      description: 'Smooth navigation with React Router v7',
       icon: <RouteIcon color="primary" />,
     },
     {
       title: 'Redux Toolkit & RTK Query',
-      description: 'Gestion d\'état moderne avec cache et invalidation automatique',
+      description: 'Modern state management with automatic caching and invalidation',
       icon: <StorageIcon color="primary" />,
     },
     {
       title: 'High Performance',
-      description: 'Optimisé avec Vite pour un développement ultra-rapide',
+      description: 'Optimized with Vite for ultra-fast development',
       icon: <SpeedIcon color="primary" />,
     },
   ];
@@ -58,7 +58,7 @@ export const FeaturesPage = () => {
           Features
         </Typography>
         <Typography variant="body1" color="text.secondary" paragraph>
-          Découvrez toutes les fonctionnalités de notre application starter React + Vite
+          Discover all the features of our React + Vite starter application
         </Typography>
 
         <Box sx={{ mt: 4 }}>
@@ -95,7 +95,7 @@ export const FeaturesPage = () => {
           <Card>
             <CardContent>
               <Typography variant="h5" gutterBottom>
-                Technologies Utilisées
+                Technologies Used
               </Typography>
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 2 }}>
                 {[
