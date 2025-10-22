@@ -1,5 +1,5 @@
 export interface BasicPageProps {
-  header1: string;
+  header: string;
   content: string;
   children?: React.ReactNode;
 }
