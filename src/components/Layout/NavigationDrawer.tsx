@@ -82,6 +82,7 @@ export const NavigationDrawer = ({ mobileOpen, onClose, isMobile }: NavigationDr
           '& .MuiDrawer-paper': {
             boxSizing: 'border-box',
             width: drawerWidth,
+              zIndex: (theme) => theme.zIndex.appBar - 1,
           },
         }}
         open
