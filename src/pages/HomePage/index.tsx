@@ -1,18 +1,60 @@
 import BasicPage from "../../components/BasicPage";
-import Link from "@mui/material/Link";
+import { Link as RouterLink } from "react-router";
+import { Box, Button, Card, CardContent, Link, Stack } from "@mui/material";
+import RouteIcon from '@mui/icons-material/Route';
+import StarIcon from '@mui/icons-material/Star';
 
 export const HomePage = () => {
   return (
     <BasicPage
       header1="Welcome to the Basic Page"
-      content="This is a simple page layout."
+      content="This is a simple page layout with routing enabled."
     >
-      <ul>
-        <li>Feature 1: Easy to use</li>
-        <li>Feature 2: Responsive design</li>
-        <li>Feature 3: Customizable components</li>
-      </ul>
+      <Box sx={{ mb: 4 }}>
+        <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
+          <Card sx={{ flex: 1 }}>
+            <CardContent>
+              <h3>Quick Actions</h3>
+              <Box sx={{ display: 'flex', gap: 2, flexDirection: 'column' }}>
+                <Button
+                  component={RouterLink}
+                  to="/features"
+                  variant="contained"
+                  startIcon={<StarIcon />}
+                  fullWidth
+                  color="secondary"
+                >
+                  View Features
+                </Button>
+                <Button
+                  component={RouterLink}
+                  to="/routes"
+                  variant="contained"
+                  startIcon={<RouteIcon />}
+                  fullWidth
+                >
+                  Manage Routes
+                </Button>
+              </Box>
+            </CardContent>
+          </Card>
+          <Card sx={{ flex: 1 }}>
+            <CardContent>
+              <h3>Welcome</h3>
+              <p>
+                Cette application starter vous offre une base solide pour développer
+                vos projets React avec les meilleures technologies du moment.
+              </p>
+              <p>
+                Explorez les <strong>Features</strong> pour découvrir tout ce qui est inclus,
+                ou commencez directement à <strong>gérer vos routes</strong> avec notre interface CRUD complète.
+              </p>
+            </CardContent>
+          </Card>
+        </Stack>
+      </Box>
 
+      <h3>Useful Links</h3>
       <ul>
         <li>
           <Link href="https://mui.com/" target="_blank" rel="noopener">
@@ -34,13 +76,20 @@ export const HomePage = () => {
             Vitest Documentation
           </Link>
         </li>
-        {/* React router */}
         <li>
           <Link href="https://reactrouter.com/" target="_blank" rel="noopener">
             React Router Documentation
           </Link>
         </li>
-        {/* Tiogars@Github */}
+        <li>
+          <Link
+            href="https://redux-toolkit.js.org/"
+            target="_blank"
+            rel="noopener"
+          >
+            Redux Toolkit Documentation
+          </Link>
+        </li>
         <li>
           <Link
             href="https://github.com/tiogars"
@@ -50,7 +99,6 @@ export const HomePage = () => {
             Tiogars@Github
           </Link>
         </li>
-        {/* https://github.com/tiogars/starter-react-vite */}
         <li>
           <Link
             href="https://github.com/tiogars/starter-react-vite"
