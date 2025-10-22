@@ -7,10 +7,9 @@ import {
   Snackbar,
   Alert,
 } from '@mui/material';
-import { DataGrid, type GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { DataGrid } from '@mui/x-data-grid';
 import AddIcon from '@mui/icons-material/Add';
+import { useRouteGrid } from './useRouteGrid';
 import {
   useGetAllRouteQuery,
   useCreateRouteMutation,
@@ -119,46 +118,10 @@ export const RoutePage = () => {
     setSnackbar({ ...snackbar, open: false });
   };
 
-  const columns: GridColDef<Route>[] = [
-    {
-      field: 'id',
-      headerName: 'ID',
-      width: 90,
-      type: 'number',
-    },
-    {
-      field: 'name',
-      headerName: 'Name',
-      flex: 1,
-      minWidth: 200,
-    },
-    {
-      field: 'path',
-      headerName: 'Path',
-      flex: 1,
-      minWidth: 250,
-    },
-    {
-      field: 'actions',
-      type: 'actions',
-      headerName: 'Actions',
-      width: 100,
-      getActions: (params) => [
-        <GridActionsCellItem
-          icon={<EditIcon />}
-          label="Edit"
-          onClick={() => handleEdit(params.row)}
-          showInMenu={false}
-        />,
-        <GridActionsCellItem
-          icon={<DeleteIcon />}
-          label="Delete"
-          onClick={() => handleDeleteClick(params.row)}
-          showInMenu={false}
-        />,
-      ],
-    },
-  ];
+  const { columns } = useRouteGrid({
+    onEdit: handleEdit,
+    onDelete: handleDeleteClick,
+  });
 
   return (
     <Box sx={{ p: 3 }}>
