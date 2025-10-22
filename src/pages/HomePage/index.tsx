@@ -4,6 +4,22 @@ import { Box, Button, Card, CardContent, Link, Stack } from "@mui/material";
 import RouteIcon from '@mui/icons-material/Route';
 import StarIcon from '@mui/icons-material/Star';
 
+const usefulLinks = {
+  documentation: [
+    { label: "React Documentation", url: "https://react.dev/", target: "_blank" },
+    { label: "MUI Documentation", url: "https://mui.com/", target: "_blank" },
+    { label: "Vite Documentation", url: "https://vite.dev/", target: "_blank" },
+    { label: "Vitest Documentation", url: "https://vitest.dev/", target: "_blank" },
+    { label: "React Router Documentation", url: "https://reactrouter.com/", target: "_blank" },
+    { label: "Redux Toolkit Documentation", url: "https://redux-toolkit.js.org/", target: "_blank" },
+  ],
+  repositories: [
+    { label: "Tiogars@Github", url: "https://github.com/tiogars", target: "_blank" },
+    { label: "Starter React Vite Repository", url: "https://github.com/tiogars/starter-react-vite", target: "_blank" },
+    { label: "Starter API Spring MySQL Repository", url: "https://github.com/tiogars/starter-api-spring-mysql", target: "_blank" },
+  ],
+};
+
 export const HomePage = () => {
   return (
     <BasicPage
@@ -55,60 +71,32 @@ export const HomePage = () => {
       </Box>
 
       <h3>Useful Links</h3>
-      <ul>
-        <li>
-          <Link href="https://mui.com/" target="_blank" rel="noopener">
-            MUI Documentation
-          </Link>
-        </li>
-        <li>
-          <Link href="https://react.dev/" target="_blank" rel="noopener">
-            React Documentation
-          </Link>
-        </li>
-        <li>
-          <Link href="https://vite.dev/" target="_blank" rel="noopener">
-            Vite Documentation
-          </Link>
-        </li>
-        <li>
-          <Link href="https://vitest.dev/" target="_blank" rel="noopener">
-            Vitest Documentation
-          </Link>
-        </li>
-        <li>
-          <Link href="https://reactrouter.com/" target="_blank" rel="noopener">
-            React Router Documentation
-          </Link>
-        </li>
-        <li>
-          <Link
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener"
-          >
-            Redux Toolkit Documentation
-          </Link>
-        </li>
-        <li>
-          <Link
-            href="https://github.com/tiogars"
-            target="_blank"
-            rel="noopener"
-          >
-            Tiogars@Github
-          </Link>
-        </li>
-        <li>
-          <Link
-            href="https://github.com/tiogars/starter-react-vite"
-            target="_blank"
-            rel="noopener"
-          >
-            Starter React Vite Repository
-          </Link>
-        </li>
-      </ul>
+      <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
+        <Card sx={{ flex: 1 }}>
+          <CardContent>
+            <h4>Documentation</h4>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              {usefulLinks.documentation.map((link) => (
+                <Link key={link.url} href={link.url} target={link.target} rel="noopener">
+                  {link.label}
+                </Link>
+              ))}
+            </Box>
+          </CardContent>
+        </Card>
+        <Card sx={{ flex: 1 }}>
+          <CardContent>
+            <h4>GitHub Repositories</h4>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              {usefulLinks.repositories.map((link) => (
+                <Link key={link.url} href={link.url} target={link.target} rel="noopener">
+                  {link.label}
+                </Link>
+              ))}
+            </Box>
+          </CardContent>
+        </Card>
+      </Stack>
     </BasicPage>
   );
 };
