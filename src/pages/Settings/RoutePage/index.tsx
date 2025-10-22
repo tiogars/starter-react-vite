@@ -41,6 +41,11 @@ export const RoutePage = () => {
   const [updateRoute, { isLoading: isUpdating }] = useUpdateRouteMutation();
   const [deleteRoute, { isLoading: isDeleting }] = useDeleteRouteMutation();
 
+  // Debug: Log routes data
+  console.log('Routes data:', routes);
+  console.log('Is loading:', isLoading);
+  console.log('Error:', error);
+
   const handleCreate = () => {
     setSelectedRoute(null);
     setDialogOpen(true);
@@ -182,6 +187,7 @@ export const RoutePage = () => {
           rows={routes}
           columns={columns}
           loading={isLoading}
+          getRowId={(row) => row.id ?? `temp-${Math.random()}`}
           pageSizeOptions={[5, 10, 25, 50]}
           initialState={{
             pagination: {
@@ -198,12 +204,30 @@ export const RoutePage = () => {
               outline: 'none',
             },
           }}
+          slots={{
+            noRowsOverlay: () => (
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  height: '100%',
+                }}
+              >
+                <Typography variant="body1" color="text.secondary">
+                  No routes found. Click "Create Route" to add one.
+                </Typography>
+              </Box>
+            ),
+          }}
         />
       </Paper>
 
       {error && (
         <Alert severity="error" sx={{ mt: 2 }}>
-          Failed to load routes. Please try again later.
+          Failed to load routes. Please check the console for details.
+          <br />
+          Error: {JSON.stringify(error)}
         </Alert>
       )}
 
