@@ -12,7 +12,7 @@ export const ThemeToggle = () => {
   };
 
   return (
-    <Tooltip title={`Basculer vers le thème ${mode === 'light' ? 'sombre' : 'clair'}`}>
+    <Tooltip title={`Switch to ${mode === 'light' ? 'dark' : 'light'} theme`}>
       <IconButton onClick={handleToggle} color="inherit">
         {mode === 'light' ? <Brightness4 /> : <Brightness7 />}
       </IconButton>
