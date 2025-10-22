@@ -1,7 +1,11 @@
 name: starter-react-vite-test
 
 services:
-  app:
+  app-local:
     image: starter-react-vite
     ports:
       - "8080:80"
+  app-prod:
+    image: tiogars/starter-react-vite:latest
+    ports:
+      - "8081:80"
