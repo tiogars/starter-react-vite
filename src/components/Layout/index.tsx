@@ -1,32 +1,22 @@
-import { Outlet, Link as RouterLink } from 'react-router';
-import {
-  AppBar,
-  Box,
-  Toolbar,
-  Typography,
-  Button,
-  Container,
-  IconButton,
-  useTheme,
-  useMediaQuery,
-} from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import { useState } from 'react';
-import { NavigationDrawer } from './NavigationDrawer';
+import { Outlet } from "react-router";
+import { AppBar, Box, Container, useTheme, useMediaQuery } from "@mui/material";
+import { LayoutToolbar } from "./LayoutToolbar";
+import { useState } from "react";
+import { NavigationDrawer } from "./NavigationDrawer";
 
 const drawerWidth = 240;
 
 export const Layout = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: "flex" }}>
       <AppBar
         position="fixed"
         sx={{
@@ -34,44 +24,10 @@ export const Layout = () => {
           ml: { md: `${drawerWidth}px` },
         }}
       >
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { md: 'none' } }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            Starter React Vite
-          </Typography>
-          <Button
-            color="inherit"
-            component={RouterLink}
-            to="/"
-          >
-            Home
-          </Button>
-          <Button
-            color="inherit"
-            component={RouterLink}
-            to="/features"
-          >
-            Features
-          </Button>
-          <Button
-            color="inherit"
-            component={RouterLink}
-            to="/routes"
-          >
-            Routes
-          </Button>
-        </Toolbar>
+        <LayoutToolbar onMenuClick={handleDrawerToggle} />
       </AppBar>
 
-      <NavigationDrawer 
+      <NavigationDrawer
         mobileOpen={mobileOpen}
         onClose={handleDrawerToggle}
         isMobile={isMobile}
@@ -82,11 +38,12 @@ export const Layout = () => {
         sx={{
           flexGrow: 1,
           p: 3,
-            width: { xs: '100%', md: `calc(100% - ${drawerWidth}px)` },
-            ml: { xs: 0, md: `${drawerWidth}px` },
+          width: { xs: "100%", md: `calc(100% - ${drawerWidth}px)` },
+          ml: { xs: 0, md: `${drawerWidth}px` },
         }}
       >
-        <Toolbar />
+        {/* Décalage pour AppBar fixe */}
+        <Box sx={{ height: { xs: 56, md: 64 } }} />
         <Container maxWidth="xl">
           <Outlet />
         </Container>
