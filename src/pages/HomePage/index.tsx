@@ -58,12 +58,12 @@ export const HomePage = () => {
             <CardContent>
               <h3>Welcome</h3>
               <p>
-                Cette application starter vous offre une base solide pour développer
-                vos projets React avec les meilleures technologies du moment.
+                This starter application provides you with a solid foundation to develop
+                your React projects with the best technologies of the moment.
               </p>
               <p>
-                Explorez les <strong>Features</strong> pour découvrir tout ce qui est inclus,
-                ou commencez directement à <strong>gérer vos routes</strong> avec notre interface CRUD complète.
+                Explore the <strong>Features</strong> to discover everything that's included,
+                or start directly <strong>managing your routes</strong> with our complete CRUD interface.
               </p>
             </CardContent>
           </Card>

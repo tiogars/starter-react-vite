@@ -11,17 +11,12 @@ const config: ConfigFile = {
   apiFile: "./src/store/emptyApi.ts",
   apiImport: "emptySplitApi",
   outputFiles: {
-    "./src/store/actuatorApi.ts": {
-      filterEndpoints: [/actuator/i],
-    },
-  "./src/store/routesApi.ts": {
+    "./src/store/routesApi.ts": {
       filterEndpoints: [/route/i],
     },
   },
-  // outputFile: "./src/store/starterApi.ts",
-  // exportName: "starterApi",
   hooks: true,
-  tag: true
+  tag: true,
 };
 
 export default config;

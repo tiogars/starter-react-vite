@@ -9,6 +9,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { Link as RouterLink } from 'react-router';
 import React from 'react';
 import { ThemeToggle } from '../ThemeToggle';
+import ApiHealth from '../ApiHealth';
 
 interface LayoutToolbarProps {
   onMenuClick: () => void;

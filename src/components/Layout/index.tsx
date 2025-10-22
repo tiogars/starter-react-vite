@@ -1,4 +1,5 @@
 import { Outlet } from "react-router";
+import Footer from "./Footer";
 import { AppBar, Box, Container, useTheme, useMediaQuery } from "@mui/material";
 import { LayoutToolbar } from "./LayoutToolbar";
 import { useState } from "react";
@@ -47,6 +48,7 @@ export const Layout = () => {
         <Container maxWidth="xl">
           <Outlet />
         </Container>
+        <Footer />
       </Box>
     </Box>
   );
