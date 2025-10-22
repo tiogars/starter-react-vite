@@ -7,7 +7,7 @@ import StarIcon from '@mui/icons-material/Star';
 export const HomePage = () => {
   return (
     <BasicPage
-      header1="Welcome to the Basic Page"
+      header="Welcome to the Basic Page"
       content="This is a simple page layout with routing enabled."
     >
       <Box sx={{ mb: 4 }}>
