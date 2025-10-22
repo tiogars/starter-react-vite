@@ -1,15 +1,14 @@
+import MenuIcon from '@mui/icons-material/Menu';
 import {
-  Toolbar,
-  Typography,
+  Box,
   Button,
   IconButton,
-  Box,
+  Toolbar,
+  Typography,
 } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import { Link as RouterLink } from 'react-router';
 import React from 'react';
+import { Link as RouterLink } from 'react-router';
 import { ThemeToggle } from '../ThemeToggle';
-import ApiHealth from '../ApiHealth';
 
 interface LayoutToolbarProps {
   onMenuClick: () => void;
