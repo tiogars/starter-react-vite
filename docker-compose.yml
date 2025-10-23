@@ -2,7 +2,11 @@ name: starter-react-vite-test
 
 services:
   app-local:
+    # build the Docker image named "starter-react-vite" from the local Dockerfile
     image: starter-react-vite
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8080:80"
   app-prod:
