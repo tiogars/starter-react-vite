@@ -4,6 +4,7 @@ import HomePage from '../pages/HomePage';
 import FeaturesPage from '../pages/FeaturesPage';
 import RoutePage from '../pages/Settings/RoutePage';
 import ErrorPage from '../pages/ErrorPage';
+import { ArchitecturePage } from '../pages/ArchitecturePage';
 
 export const router = createBrowserRouter([
   {
@@ -22,6 +23,10 @@ export const router = createBrowserRouter([
       {
         path: 'routes',
         element: <RoutePage />,
+      },
+      {
+        path: 'architecture',
+        element: <ArchitecturePage />,
       },
     ],
   },

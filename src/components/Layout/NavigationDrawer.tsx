@@ -1,4 +1,4 @@
-import { Link as RouterLink } from 'react-router';
+import { Link as RouterLink } from "react-router";
 import {
   Box,
   Toolbar,
@@ -9,17 +9,19 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-} from '@mui/material';
-import HomeIcon from '@mui/icons-material/Home';
-import FeaturesIcon from '@mui/icons-material/Star';
-import RouteIcon from '@mui/icons-material/Route';
+} from "@mui/material";
+import HomeIcon from "@mui/icons-material/Home";
+import FeaturesIcon from "@mui/icons-material/Star";
+import AccountTreeIcon from "@mui/icons-material/AccountTree";
+import RouteIcon from "@mui/icons-material/Route";
 
 const drawerWidth = 240;
 
 const menuItems = [
-  { text: 'Home', path: '/', icon: <HomeIcon /> },
-  { text: 'Features', path: '/features', icon: <FeaturesIcon /> },
-  { text: 'Routes', path: '/routes', icon: <RouteIcon /> },
+  { text: "Home", path: "/", icon: <HomeIcon /> },
+  { text: "Features", path: "/features", icon: <FeaturesIcon /> },
+  { text: "Routes", path: "/routes", icon: <RouteIcon /> },
+  { text: "Architecture", path: "/architecture", icon: <AccountTreeIcon /> },
 ];
 
 interface NavigationDrawerProps {
@@ -28,7 +30,13 @@ interface NavigationDrawerProps {
   isMobile: boolean;
 }
 
-const DrawerContent = ({ onClose, isMobile }: { onClose: () => void; isMobile: boolean }) => (
+const DrawerContent = ({
+  onClose,
+  isMobile,
+}: {
+  onClose: () => void;
+  isMobile: boolean;
+}) => (
   <Box>
     <Toolbar>
       <Typography variant="h6" noWrap component="div">
@@ -52,7 +60,11 @@ const DrawerContent = ({ onClose, isMobile }: { onClose: () => void; isMobile: b
   </Box>
 );
 
-export const NavigationDrawer = ({ mobileOpen, onClose, isMobile }: NavigationDrawerProps) => {
+export const NavigationDrawer = ({
+  mobileOpen,
+  onClose,
+  isMobile,
+}: NavigationDrawerProps) => {
   return (
     <>
       {/* Mobile drawer */}
@@ -64,9 +76,9 @@ export const NavigationDrawer = ({ mobileOpen, onClose, isMobile }: NavigationDr
           keepMounted: true, // Better open performance on mobile.
         }}
         sx={{
-          display: { xs: 'block', md: 'none' },
-          '& .MuiDrawer-paper': {
-            boxSizing: 'border-box',
+          display: { xs: "block", md: "none" },
+          "& .MuiDrawer-paper": {
+            boxSizing: "border-box",
             width: drawerWidth,
           },
         }}
@@ -78,11 +90,11 @@ export const NavigationDrawer = ({ mobileOpen, onClose, isMobile }: NavigationDr
       <Drawer
         variant="permanent"
         sx={{
-          display: { xs: 'none', md: 'block' },
-          '& .MuiDrawer-paper': {
-            boxSizing: 'border-box',
+          display: { xs: "none", md: "block" },
+          "& .MuiDrawer-paper": {
+            boxSizing: "border-box",
             width: drawerWidth,
-              zIndex: (theme) => theme.zIndex.appBar - 1,
+            zIndex: (theme) => theme.zIndex.appBar - 1,
           },
         }}
         open
