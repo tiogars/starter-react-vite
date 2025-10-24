@@ -9,12 +9,12 @@ import {
   TextField,
   Box,
 } from '@mui/material';
-import type { Route } from '../../../store/routesApi';
+import type { Route, RouteCreateForm, RouteUpdateForm } from '../../../store/routesApi';
 
 interface RouteDialogProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (data: Route) => void;
+  onSubmit: (data: RouteCreateForm | RouteUpdateForm) => void;
   initialData?: Route | null;
   isLoading?: boolean;
 }
@@ -31,7 +31,7 @@ export const RouteDialog = ({
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<Route>({
+  } = useForm<RouteCreateForm | RouteUpdateForm>({
     defaultValues: {
       name: '',
       path: '',
@@ -46,8 +46,22 @@ export const RouteDialog = ({
     }
   }, [initialData, reset, open]);
 
-  const handleFormSubmit = (data: Route) => {
-    onSubmit(data);
+  const handleFormSubmit = (data: RouteCreateForm | RouteUpdateForm) => {
+    // Si on a un initialData avec un id, on envoie un RouteUpdateForm
+    // Sinon on envoie un RouteCreateForm
+    if (initialData?.id) {
+      const updateData: RouteUpdateForm = {
+        ...data,
+        id: initialData.id,
+      };
+      onSubmit(updateData);
+    } else {
+      const createData: RouteCreateForm = {
+        name: data.name,
+        path: data.path,
+      };
+      onSubmit(createData);
+    }
     reset();
   };
 

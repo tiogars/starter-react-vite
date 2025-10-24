@@ -1,24 +1,19 @@
-import { useState } from 'react';
+import AddIcon from "@mui/icons-material/Add";
+import { Alert, Box, Button, Paper, Snackbar, Typography } from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
+import { useState } from "react";
 import {
-  Box,
-  Button,
-  Paper,
-  Typography,
-  Snackbar,
-  Alert,
-} from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
-import AddIcon from '@mui/icons-material/Add';
-import { useRouteGrid } from './useRouteGrid';
-import {
-  useGetAllRouteQuery,
   useCreateRouteMutation,
-  useUpdateRouteMutation,
   useDeleteRouteMutation,
+  useGetAllRouteQuery,
+  useUpdateRouteMutation,
   type Route,
-} from '../../../store/routesApi';
-import { RouteDialog } from './RouteDialog';
-import { DeleteConfirmDialog } from './DeleteConfirmDialog';
+  type RouteCreateForm,
+  type RouteUpdateForm,
+} from "../../../store/routesApi";
+import { DeleteConfirmDialog } from "./DeleteConfirmDialog";
+import { RouteDialog } from "./RouteDialog";
+import { useRouteGrid } from "./useRouteGrid";
 
 export const RoutePage = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -27,11 +22,11 @@ export const RoutePage = () => {
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
     message: string;
-    severity: 'success' | 'error';
+    severity: "success" | "error";
   }>({
     open: false,
-    message: '',
-    severity: 'success',
+    message: "",
+    severity: "success",
   });
 
   // RTK Query hooks
@@ -41,9 +36,9 @@ export const RoutePage = () => {
   const [deleteRoute, { isLoading: isDeleting }] = useDeleteRouteMutation();
 
   // Debug: Log routes data
-  console.log('Routes data:', routes);
-  console.log('Is loading:', isLoading);
-  console.log('Error:', error);
+  console.log("Routes data:", routes);
+  console.log("Is loading:", isLoading);
+  console.log("Error:", error);
 
   const handleCreate = () => {
     setSelectedRoute(null);
@@ -60,26 +55,34 @@ export const RoutePage = () => {
     setDeleteDialogOpen(true);
   };
 
-  const handleDialogSubmit = async (data: Route) => {
+  const handleDialogSubmit = async (data: RouteCreateForm | RouteUpdateForm) => {
     try {
       if (selectedRoute?.id) {
-        // Update existing route
+        // Update existing route - data doit inclure l'id pour RouteUpdateForm
+        const updateData: RouteUpdateForm = {
+          ...data,
+          id: selectedRoute.id,
+        };
         await updateRoute({
           id: selectedRoute.id,
-          route: { ...data, id: selectedRoute.id },
+          routeUpdateForm: updateData,
         }).unwrap();
         setSnackbar({
           open: true,
-          message: 'Route updated successfully',
-          severity: 'success',
+          message: "Route updated successfully",
+          severity: "success",
         });
       } else {
-        // Create new route
-        await createRoute({ route: data }).unwrap();
+        // Create new route - data est RouteCreateForm (sans id)
+        const createData: RouteCreateForm = {
+          name: data.name,
+          path: data.path,
+        };
+        await createRoute({ routeCreateForm: createData }).unwrap();
         setSnackbar({
           open: true,
-          message: 'Route created successfully',
-          severity: 'success',
+          message: "Route created successfully",
+          severity: "success",
         });
       }
       setDialogOpen(false);
@@ -87,8 +90,8 @@ export const RoutePage = () => {
     } catch {
       setSnackbar({
         open: true,
-        message: 'Operation failed. Please try again.',
-        severity: 'error',
+        message: "Operation failed. Please try again.",
+        severity: "error",
       });
     }
   };
@@ -100,16 +103,16 @@ export const RoutePage = () => {
       await deleteRoute({ id: selectedRoute.id }).unwrap();
       setSnackbar({
         open: true,
-        message: 'Route deleted successfully',
-        severity: 'success',
+        message: "Route deleted successfully",
+        severity: "success",
       });
       setDeleteDialogOpen(false);
       setSelectedRoute(null);
     } catch {
       setSnackbar({
         open: true,
-        message: 'Delete failed. Please try again.',
-        severity: 'error',
+        message: "Delete failed. Please try again.",
+        severity: "error",
       });
     }
   };
@@ -127,9 +130,9 @@ export const RoutePage = () => {
     <Box sx={{ p: 3 }}>
       <Box
         sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
           mb: 3,
         }}
       >
@@ -145,7 +148,7 @@ export const RoutePage = () => {
         </Button>
       </Box>
 
-      <Paper sx={{ height: 600, width: '100%' }}>
+      <Paper sx={{ height: 600, width: "100%" }}>
         <DataGrid
           rows={routes}
           columns={columns}
@@ -160,21 +163,21 @@ export const RoutePage = () => {
           disableRowSelectionOnClick
           sx={{
             border: 0,
-            '& .MuiDataGrid-cell:focus': {
-              outline: 'none',
+            "& .MuiDataGrid-cell:focus": {
+              outline: "none",
             },
-            '& .MuiDataGrid-cell:focus-within': {
-              outline: 'none',
+            "& .MuiDataGrid-cell:focus-within": {
+              outline: "none",
             },
           }}
           slots={{
             noRowsOverlay: () => (
               <Box
                 sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  height: '100%',
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "100%",
                 }}
               >
                 <Typography variant="body1" color="text.secondary">
@@ -220,12 +223,12 @@ export const RoutePage = () => {
         open={snackbar.open}
         autoHideDuration={6000}
         onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
       >
         <Alert
           onClose={handleCloseSnackbar}
           severity={snackbar.severity}
-          sx={{ width: '100%' }}
+          sx={{ width: "100%" }}
         >
           {snackbar.message}
         </Alert>

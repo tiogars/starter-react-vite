@@ -6,7 +6,7 @@ import {
   Button,
   Typography,
 } from '@mui/material';
-import type { Route } from '../../../store/routesApi';
+import type { Route } from "../../../store/routesApi";
 
 interface DeleteConfirmDialogProps {
   open: boolean;
