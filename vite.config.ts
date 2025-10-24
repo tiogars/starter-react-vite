@@ -17,6 +17,11 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './src/setupTests.ts',
     css: true,
+    server: {
+      deps: {
+        inline: ['@mui/x-data-grid'],
+      },
+    },
     coverage: {
       reporter: ['text', 'html'],
     },
