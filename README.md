@@ -1,6 +1,14 @@
 # starter-react-vite
 React Vite web application to develop as a starter
 
+## Usage
+
+```bash
+docker logout
+docker login ghcr.io
+docker pull ghcr.io/tiogars/starter-react-vite:latest
+```
+
 ## Commands used to create the project
 
 ```bash

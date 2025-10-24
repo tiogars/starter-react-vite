@@ -1,0 +1,9 @@
+.api-health-error {
+  color: red;
+}
+.api-health-success {
+  color: green;
+}
+.api-health-unknown {
+  color: orange;
+}
