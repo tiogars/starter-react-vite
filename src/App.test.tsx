@@ -1,24 +1,49 @@
-import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { render, screen, waitFor } from '@testing-library/react'
 import App from './App'
 import { describe, it, expect } from 'vitest'
 
 describe('App', () => {
-  it('renders the title and increments the counter', async () => {
-    const user = userEvent.setup()
+  it('renders the application with Redux Provider, Router and Theme', async () => {
     render(<App />)
 
-    // Title appears
-    expect(
-      screen.getByRole('heading', { name: /vite \+ react/i })
-    ).toBeInTheDocument()
+    // Wait for the router to render the home page
+    await waitFor(() => {
+      expect(screen.getByText(/Welcome to the Basic Page/i)).toBeInTheDocument()
+    })
+  })
 
-    // Button starts with count 0
-    const button = screen.getByRole('button', { name: /count is/i })
-    expect(button).toHaveTextContent('count is 0')
+  it('renders the home page content', async () => {
+    render(<App />)
 
-    // Click increments
-    await user.click(button)
-    expect(button).toHaveTextContent('count is 1')
+    // Check for home page specific content - using getAllByText since content appears in layout components
+    await waitFor(() => {
+      const elements = screen.getAllByText(/This is a simple page layout with routing enabled/i)
+      expect(elements.length).toBeGreaterThan(0)
+    })
+  })
+
+  it('renders navigation links', async () => {
+    render(<App />)
+
+    // Check for navigation links (RouterLink renders as <a> tags, not buttons)
+    await waitFor(() => {
+      const viewFeaturesButtons = screen.getAllByText(/View Features/i)
+      const manageRoutesButtons = screen.getAllByText(/Manage Routes/i)
+      expect(viewFeaturesButtons.length).toBeGreaterThan(0)
+      expect(manageRoutesButtons.length).toBeGreaterThan(0)
+    })
+  })
+
+  it('renders useful links sections', async () => {
+    render(<App />)
+
+    // Check for useful links sections - using getAllByText since links appear multiple times in layout
+    await waitFor(() => {
+      const documentationLinks = screen.getAllByText(/React Documentation/i)
+      expect(documentationLinks.length).toBeGreaterThan(0)
+      
+      const githubLinks = screen.getAllByText(/Tiogars@Github/i)
+      expect(githubLinks.length).toBeGreaterThan(0)
+    })
   })
 })
