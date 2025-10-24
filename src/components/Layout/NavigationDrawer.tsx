@@ -22,6 +22,7 @@ const menuItems = [
   { text: "Features", path: "/features", icon: <FeaturesIcon /> },
   { text: "Routes", path: "/routes", icon: <RouteIcon /> },
   { text: "Architecture", path: "/architecture", icon: <AccountTreeIcon /> },
+  { text: "Samples", path: "/samples", icon: <AccountTreeIcon /> },
 ];
 
 interface NavigationDrawerProps {

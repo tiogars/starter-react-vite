@@ -14,6 +14,9 @@ const config: ConfigFile = {
     "./src/store/routesApi.ts": {
       filterEndpoints: [/route/i],
     },
+    "./src/store/sampleApi.ts": {
+      filterEndpoints: [/sample/i],
+    },
   },
   hooks: true,
   tag: true,

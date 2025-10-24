@@ -14,7 +14,7 @@ const injectedRtkApi = api
         query: (queryArg) => ({
           url: `/routes/${queryArg.id}`,
           method: "PUT",
-          body: queryArg.route,
+          body: queryArg.routeUpdateForm,
         }),
         invalidatesTags: ["route"],
       }),
@@ -33,7 +33,7 @@ const injectedRtkApi = api
         query: (queryArg) => ({
           url: `/routes`,
           method: "POST",
-          body: queryArg.route,
+          body: queryArg.routeCreateForm,
         }),
         invalidatesTags: ["route"],
       }),
@@ -48,7 +48,7 @@ export type GetRouteByIdApiArg = {
 export type UpdateRouteApiResponse = /** status 200 OK */ Route;
 export type UpdateRouteApiArg = {
   id: number;
-  route: Route;
+  routeUpdateForm: RouteUpdateForm;
 };
 export type DeleteRouteApiResponse = unknown;
 export type DeleteRouteApiArg = {
@@ -58,10 +58,19 @@ export type GetAllRouteApiResponse = /** status 200 OK */ Route[];
 export type GetAllRouteApiArg = void;
 export type CreateRouteApiResponse = /** status 200 OK */ Route;
 export type CreateRouteApiArg = {
-  route: Route;
+  routeCreateForm: RouteCreateForm;
 };
 export type Route = {
   id?: number;
+  name?: string;
+  path?: string;
+};
+export type RouteUpdateForm = {
+  id?: number;
+  name?: string;
+  path?: string;
+};
+export type RouteCreateForm = {
   name?: string;
   path?: string;
 };
