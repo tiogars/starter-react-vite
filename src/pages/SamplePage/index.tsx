@@ -10,22 +10,14 @@ import {
   CardContent,
   Chip,
   CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  FormControlLabel,
   IconButton,
   Paper,
-  Stack,
-  Switch,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
   Typography,
 } from "@mui/material";
 import type {
@@ -34,6 +26,9 @@ import type {
 import type { SerializedError } from "@reduxjs/toolkit";
 import { useState } from "react";
 import BasicPage from "../../components/BasicPage";
+import SampleCreateDialog from "../../components/SampleCreateDialog";
+import SampleDetailsDialog from "../../components/SampleDetailsDialog";
+import DeleteConfirmDialog from "../../components/DeleteConfirmDialog";
 import { API_TIMEOUT_MS } from "../../store/emptyApi";
 import {
   useCreateSampleMutation,
@@ -195,6 +190,10 @@ export const SamplePage = () => {
     return new Date(dateString).toLocaleString();
   };
 
+  const createErrorParts = getErrorParts(createError);
+  const deleteErrorParts = getErrorParts(deleteError);
+  const viewErrorParts = getErrorParts(viewError);
+
   return (
     <BasicPage
       header="Sample Management"
@@ -304,218 +303,55 @@ export const SamplePage = () => {
       )}
 
       {/* Dialog de création */}
-      <Dialog
+      <SampleCreateDialog
         open={createDialogOpen}
-        onClose={handleCloseCreateDialog}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>Create New Sample</DialogTitle>
-        <DialogContent>
-          {/* Affichage d'erreur de création */}
-          {isCreateError &&
-            (() => {
-              const { status, message, violations } =
-                getErrorParts(createError);
-              return (
-                <Alert severity="error" sx={{ mb: 2 }}>
-                  {status ? `Erreur ${status} — ` : ""}
-                  {message || "Echec de la création."}
-                  {violations && (
-                    <Box component="ul" sx={{ pl: 3, mb: 0 }}>
-                      {Object.entries(violations).map(([field, msg]) => (
-                        <li key={field}>
-                          <strong>{field}:</strong> {msg}
-                        </li>
-                      ))}
-                    </Box>
-                  )}
-                </Alert>
-              );
-            })()}
-          <Stack spacing={2} sx={{ mt: 1 }}>
-            <TextField
-              label="Name"
-              fullWidth
-              value={formData.name || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              required
-              error={Boolean(getErrorParts(createError).violations?.name)}
-              helperText={getErrorParts(createError).violations?.name}
-            />
-            <TextField
-              label="Description"
-              fullWidth
-              multiline
-              rows={3}
-              value={formData.description || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
-              error={Boolean(
-                getErrorParts(createError).violations?.description
-              )}
-              helperText={getErrorParts(createError).violations?.description}
-            />
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={formData.active || false}
-                  onChange={(e) =>
-                    setFormData({ ...formData, active: e.target.checked })
-                  }
-                />
-              }
-              label="Active"
-            />
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseCreateDialog}>Cancel</Button>
-          <Button
-            onClick={handleCreateSample}
-            variant="contained"
-            disabled={isCreating || !formData.name}
-          >
-            {isCreating ? <CircularProgress size={24} /> : "Create"}
-          </Button>
-        </DialogActions>
-      </Dialog>
+        value={formData}
+        onChange={setFormData}
+        onCancel={handleCloseCreateDialog}
+        onSubmit={handleCreateSample}
+        submitting={isCreating}
+        errorMessage={
+          isCreateError
+            ? `${createErrorParts.status ? `Erreur ${createErrorParts.status} — ` : ""}${
+                createErrorParts.message || "Echec de la création."
+              }`
+            : undefined
+        }
+        violations={createErrorParts.violations}
+      />
 
       {/* Dialog de visualisation */}
-      <Dialog
+      <SampleDetailsDialog
         open={viewDialogOpen}
+        sample={selectedSample || undefined}
+        isLoading={isLoadingSample}
+        errorMessage={
+          viewError
+            ? `${viewErrorParts.status ? `Erreur ${viewErrorParts.status} — ` : ""}${
+                viewErrorParts.message || "Impossible de charger les détails."
+              }`
+            : undefined
+        }
         onClose={handleCloseViewDialog}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>Sample Details</DialogTitle>
-        <DialogContent>
-          {isLoadingSample && (
-            <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
-              <CircularProgress />
-            </Box>
-          )}
-          {viewError &&
-            (() => {
-              const { status, message } = getErrorParts(viewError);
-              return (
-                <Alert severity="error" sx={{ mb: 2 }}>
-                  {status ? `Erreur ${status} — ` : ""}
-                  {message || "Impossible de charger les détails."}
-                </Alert>
-              );
-            })()}
-          {selectedSample && (
-            <Stack spacing={2} sx={{ mt: 1 }}>
-              <Box>
-                <Typography variant="subtitle2" color="text.secondary">
-                  ID
-                </Typography>
-                <Typography variant="body1">{selectedSample.id}</Typography>
-              </Box>
-              <Box>
-                <Typography variant="subtitle2" color="text.secondary">
-                  Name
-                </Typography>
-                <Typography variant="body1">{selectedSample.name}</Typography>
-              </Box>
-              <Box>
-                <Typography variant="subtitle2" color="text.secondary">
-                  Description
-                </Typography>
-                <Typography variant="body1">
-                  {selectedSample.description || "No description"}
-                </Typography>
-              </Box>
-              <Box>
-                <Typography variant="subtitle2" color="text.secondary">
-                  Status
-                </Typography>
-                <Chip
-                  label={selectedSample.active ? "Active" : "Inactive"}
-                  color={selectedSample.active ? "success" : "default"}
-                  size="small"
-                />
-              </Box>
-              <Box>
-                <Typography variant="subtitle2" color="text.secondary">
-                  Created At
-                </Typography>
-                <Typography variant="body1">
-                  {formatDate(selectedSample.createdAt)}
-                </Typography>
-              </Box>
-              <Box>
-                <Typography variant="subtitle2" color="text.secondary">
-                  Created By
-                </Typography>
-                <Typography variant="body1">
-                  {selectedSample.createdBy || "N/A"}
-                </Typography>
-              </Box>
-              <Box>
-                <Typography variant="subtitle2" color="text.secondary">
-                  Updated At
-                </Typography>
-                <Typography variant="body1">
-                  {formatDate(selectedSample.updatedAt)}
-                </Typography>
-              </Box>
-              <Box>
-                <Typography variant="subtitle2" color="text.secondary">
-                  Updated By
-                </Typography>
-                <Typography variant="body1">
-                  {selectedSample.updatedBy || "N/A"}
-                </Typography>
-              </Box>
-            </Stack>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseViewDialog}>Close</Button>
-        </DialogActions>
-      </Dialog>
+      />
 
       {/* Dialog de confirmation de suppression */}
-      <Dialog
+      <DeleteConfirmDialog
         open={deleteDialogOpen}
-        onClose={handleCloseDeleteDialog}
-        maxWidth="xs"
-        fullWidth
-      >
-        <DialogTitle>Confirm Delete</DialogTitle>
-        <DialogContent>
-          {deleteError &&
-            (() => {
-              const { status, message } = getErrorParts(deleteError);
-              return (
-                <Alert severity="error" sx={{ mb: 2 }}>
-                  {status ? `Erreur ${status} — ` : ""}
-                  {message || "La suppression a échoué."}
-                </Alert>
-              );
-            })()}
-          <Typography>
-            Are you sure you want to delete this sample? This action cannot be
-            undone.
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDeleteDialog}>Cancel</Button>
-          <Button
-            onClick={handleDeleteSample}
-            variant="contained"
-            color="error"
-            disabled={isDeleting}
-          >
-            {isDeleting ? <CircularProgress size={24} /> : "Delete"}
-          </Button>
-        </DialogActions>
-      </Dialog>
+        loading={isDeleting}
+        errorMessage={
+          deleteError
+            ? `${deleteErrorParts.status ? `Erreur ${deleteErrorParts.status} — ` : ""}${
+                deleteErrorParts.message || "La suppression a échoué."
+              }`
+            : undefined
+        }
+        onCancel={handleCloseDeleteDialog}
+        onConfirm={handleDeleteSample}
+        message={
+          "Are you sure you want to delete this sample? This action cannot be undone."
+        }
+      />
     </BasicPage>
   );
 };
