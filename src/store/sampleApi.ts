@@ -41,7 +41,8 @@ const injectedRtkApi = api
 export { injectedRtkApi as enhancedApi };
 export type GetAllSamplesApiResponse = /** status 200 OK */ Sample[];
 export type GetAllSamplesApiArg = void;
-export type CreateSampleApiResponse = /** status 200 OK */ Sample;
+export type CreateSampleApiResponse =
+  /** status 200 Sample created successfully */ Sample;
 export type CreateSampleApiArg = {
   sampleCreateForm: SampleCreateForm;
 };
@@ -55,13 +56,25 @@ export type DeleteSampleApiArg = {
 };
 export type Sample = {
   id?: number;
-  name?: string;
+  name: string;
   description?: string;
   active?: boolean;
   createdAt?: string;
   createdBy?: string;
   updatedAt?: string;
   updatedBy?: string;
+};
+export type ErrorResponse = {
+  /** HTTP status code */
+  status?: number;
+  /** Error type */
+  error?: string;
+  /** Human-readable error message */
+  message?: string;
+  /** Map of field names to their specific validation error messages */
+  violations?: {
+    [key: string]: string;
+  };
 };
 export type SampleCreateForm = {
   name?: string;

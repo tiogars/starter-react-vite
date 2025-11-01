@@ -65,6 +65,18 @@ export type Route = {
   name?: string;
   path?: string;
 };
+export type ErrorResponse = {
+  /** HTTP status code */
+  status?: number;
+  /** Error type */
+  error?: string;
+  /** Human-readable error message */
+  message?: string;
+  /** Map of field names to their specific validation error messages */
+  violations?: {
+    [key: string]: string;
+  };
+};
 export type RouteUpdateForm = {
   id?: number;
   name?: string;

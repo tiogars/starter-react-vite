@@ -1,18 +1,24 @@
-import { useState } from 'react';
-import BasicPage from '../../components/BasicPage';
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import {
+  Alert,
   Box,
   Button,
   Card,
   CardContent,
+  Chip,
   CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControlLabel,
   IconButton,
   Paper,
   Stack,
+  Switch,
   Table,
   TableBody,
   TableCell,
@@ -21,56 +27,123 @@ import {
   TableRow,
   TextField,
   Typography,
-  Alert,
-  Chip,
-  FormControlLabel,
-  Switch,
-} from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import DeleteIcon from '@mui/icons-material/Delete';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import RefreshIcon from '@mui/icons-material/Refresh';
+} from "@mui/material";
+import type {
+  FetchBaseQueryError,
+} from "@reduxjs/toolkit/query";
+import type { SerializedError } from "@reduxjs/toolkit";
+import { useState } from "react";
+import BasicPage from "../../components/BasicPage";
+import { API_TIMEOUT_MS } from "../../store/emptyApi";
 import {
-  useGetAllSamplesQuery,
   useCreateSampleMutation,
-  useGetSampleQuery,
   useDeleteSampleMutation,
+  useGetAllSamplesQuery,
+  useGetSampleQuery,
   type Sample,
   type SampleCreateForm,
-} from '../../store/sampleApi';
+} from "../../store/sampleApi";
 
 export const SamplePage = () => {
+  // Helper pour parser les erreurs RTK Query (FetchBaseQueryError | SerializedError)
+  const getErrorParts = (
+    err: unknown
+  ): {
+    status?: number;
+    message?: string;
+    violations?: Record<string, string>;
+  } => {
+    const isObj = (v: unknown): v is Record<string, unknown> =>
+      !!v && typeof v === "object";
+    if (isObj(err) && "status" in err) {
+      // Gestion des erreurs spéciales de fetchBaseQuery (TIMEOUT_ERROR, FETCH_ERROR, PARSING_ERROR)
+      const statusVal = (err as { status: unknown }).status;
+      if (typeof statusVal === "string") {
+        if (statusVal === "TIMEOUT_ERROR") {
+          return {
+            message: `La requête a expiré après ${Math.round(
+              API_TIMEOUT_MS / 1000
+            )} secondes (timeout configuré).`,
+          };
+        }
+        if (statusVal === "FETCH_ERROR") {
+          return {
+            message: "Erreur réseau: impossible de joindre le serveur.",
+          };
+        }
+        if (statusVal === "PARSING_ERROR") {
+          return {
+            message: "Erreur lors du traitement de la réponse du serveur.",
+          };
+        }
+      }
+      const e = err as FetchBaseQueryError & { data?: unknown };
+      const status = typeof e.status === "number" ? e.status : undefined;
+      const data = (e.data ?? {}) as {
+        message?: string;
+        error?: string;
+        violations?: Record<string, string>;
+      };
+      const message = data.message || data.error;
+      const violations = data.violations;
+      return { status, message, violations };
+    }
+    if (isObj(err) && ("message" in err || "name" in err)) {
+      const e = err as SerializedError;
+      return { message: e.message || e.name };
+    }
+    if (typeof err === "string") return { message: err };
+    return {};
+  };
+
   // État local pour les dialogues et la sélection
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedSampleId, setSelectedSampleId] = useState<number | null>(null);
-  
+
   // Formulaire de création
   const [formData, setFormData] = useState<SampleCreateForm>({
-    name: '',
-    description: '',
+    name: "",
+    description: "",
     active: true,
   });
 
   // Queries et Mutations RTK Query
   const { data: samples, isLoading, error, refetch } = useGetAllSamplesQuery();
-  const { data: selectedSample, isLoading: isLoadingSample } = useGetSampleQuery(
+  const {
+    data: selectedSample,
+    isLoading: isLoadingSample,
+    error: viewError,
+  } = useGetSampleQuery(
     { id: selectedSampleId! },
     { skip: !selectedSampleId || !viewDialogOpen }
   );
-  const [createSample, { isLoading: isCreating }] = useCreateSampleMutation();
-  const [deleteSample, { isLoading: isDeleting }] = useDeleteSampleMutation();
+  const [
+    createSample,
+    {
+      isLoading: isCreating,
+      isError: isCreateError,
+      error: createError,
+      reset: resetCreate,
+    },
+  ] = useCreateSampleMutation();
+  const [
+    deleteSample,
+    { isLoading: isDeleting, error: deleteError },
+  ] = useDeleteSampleMutation();
 
   // Handlers pour les dialogues
   const handleOpenCreateDialog = () => {
-    setFormData({ name: '', description: '', active: true });
+    setFormData({ name: "", description: "", active: true });
+    // Clear any previous error state from the create mutation
+    resetCreate();
     setCreateDialogOpen(true);
   };
 
   const handleCloseCreateDialog = () => {
     setCreateDialogOpen(false);
-    setFormData({ name: '', description: '', active: true });
+    setFormData({ name: "", description: "", active: true });
   };
 
   const handleOpenViewDialog = (id: number) => {
@@ -99,7 +172,8 @@ export const SamplePage = () => {
       await createSample({ sampleCreateForm: formData }).unwrap();
       handleCloseCreateDialog();
     } catch (err) {
-      console.error('Failed to create sample:', err);
+      // The error will be available in createError; UI below will surface it
+      console.error("Failed to create sample:", err);
     }
   };
 
@@ -110,14 +184,14 @@ export const SamplePage = () => {
         await deleteSample({ id: selectedSampleId }).unwrap();
         handleCloseDeleteDialog();
       } catch (err) {
-        console.error('Failed to delete sample:', err);
+        console.error("Failed to delete sample:", err);
       }
     }
   };
 
   // Formatage de la date
   const formatDate = (dateString?: string) => {
-    if (!dateString) return 'N/A';
+    if (!dateString) return "N/A";
     return new Date(dateString).toLocaleString();
   };
 
@@ -127,7 +201,9 @@ export const SamplePage = () => {
       content="Manage all your samples with full CRUD operations"
     >
       {/* Actions principales */}
-      <Box sx={{ mb: 3, display: 'flex', gap: 2, justifyContent: 'space-between' }}>
+      <Box
+        sx={{ mb: 3, display: "flex", gap: 2, justifyContent: "space-between" }}
+      >
         <Button
           variant="contained"
           startIcon={<AddIcon />}
@@ -146,16 +222,22 @@ export const SamplePage = () => {
 
       {/* Gestion des états de chargement et d'erreur */}
       {isLoading && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+        <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
           <CircularProgress />
         </Box>
       )}
 
-      {error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          Error loading samples: {JSON.stringify(error)}
-        </Alert>
-      )}
+      {error &&
+        (() => {
+          const { status, message } = getErrorParts(error);
+          return (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {status ? `Erreur ${status} — ` : ""}
+              {message ||
+                `Une erreur est survenue lors du chargement des samples.`}
+            </Alert>
+          );
+        })()}
 
       {/* Table des samples */}
       {!isLoading && samples && (
@@ -189,8 +271,8 @@ export const SamplePage = () => {
                         <TableCell>{sample.description}</TableCell>
                         <TableCell>
                           <Chip
-                            label={sample.active ? 'Active' : 'Inactive'}
-                            color={sample.active ? 'success' : 'default'}
+                            label={sample.active ? "Active" : "Inactive"}
+                            color={sample.active ? "success" : "default"}
                             size="small"
                           />
                         </TableCell>
@@ -230,23 +312,52 @@ export const SamplePage = () => {
       >
         <DialogTitle>Create New Sample</DialogTitle>
         <DialogContent>
+          {/* Affichage d'erreur de création */}
+          {isCreateError &&
+            (() => {
+              const { status, message, violations } =
+                getErrorParts(createError);
+              return (
+                <Alert severity="error" sx={{ mb: 2 }}>
+                  {status ? `Erreur ${status} — ` : ""}
+                  {message || "Echec de la création."}
+                  {violations && (
+                    <Box component="ul" sx={{ pl: 3, mb: 0 }}>
+                      {Object.entries(violations).map(([field, msg]) => (
+                        <li key={field}>
+                          <strong>{field}:</strong> {msg}
+                        </li>
+                      ))}
+                    </Box>
+                  )}
+                </Alert>
+              );
+            })()}
           <Stack spacing={2} sx={{ mt: 1 }}>
             <TextField
               label="Name"
               fullWidth
-              value={formData.name || ''}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              value={formData.name || ""}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
               required
+              error={Boolean(getErrorParts(createError).violations?.name)}
+              helperText={getErrorParts(createError).violations?.name}
             />
             <TextField
               label="Description"
               fullWidth
               multiline
               rows={3}
-              value={formData.description || ''}
+              value={formData.description || ""}
               onChange={(e) =>
                 setFormData({ ...formData, description: e.target.value })
               }
+              error={Boolean(
+                getErrorParts(createError).violations?.description
+              )}
+              helperText={getErrorParts(createError).violations?.description}
             />
             <FormControlLabel
               control={
@@ -268,7 +379,7 @@ export const SamplePage = () => {
             variant="contained"
             disabled={isCreating || !formData.name}
           >
-            {isCreating ? <CircularProgress size={24} /> : 'Create'}
+            {isCreating ? <CircularProgress size={24} /> : "Create"}
           </Button>
         </DialogActions>
       </Dialog>
@@ -283,10 +394,20 @@ export const SamplePage = () => {
         <DialogTitle>Sample Details</DialogTitle>
         <DialogContent>
           {isLoadingSample && (
-            <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+            <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
               <CircularProgress />
             </Box>
           )}
+          {viewError &&
+            (() => {
+              const { status, message } = getErrorParts(viewError);
+              return (
+                <Alert severity="error" sx={{ mb: 2 }}>
+                  {status ? `Erreur ${status} — ` : ""}
+                  {message || "Impossible de charger les détails."}
+                </Alert>
+              );
+            })()}
           {selectedSample && (
             <Stack spacing={2} sx={{ mt: 1 }}>
               <Box>
@@ -306,7 +427,7 @@ export const SamplePage = () => {
                   Description
                 </Typography>
                 <Typography variant="body1">
-                  {selectedSample.description || 'No description'}
+                  {selectedSample.description || "No description"}
                 </Typography>
               </Box>
               <Box>
@@ -314,8 +435,8 @@ export const SamplePage = () => {
                   Status
                 </Typography>
                 <Chip
-                  label={selectedSample.active ? 'Active' : 'Inactive'}
-                  color={selectedSample.active ? 'success' : 'default'}
+                  label={selectedSample.active ? "Active" : "Inactive"}
+                  color={selectedSample.active ? "success" : "default"}
                   size="small"
                 />
               </Box>
@@ -332,7 +453,7 @@ export const SamplePage = () => {
                   Created By
                 </Typography>
                 <Typography variant="body1">
-                  {selectedSample.createdBy || 'N/A'}
+                  {selectedSample.createdBy || "N/A"}
                 </Typography>
               </Box>
               <Box>
@@ -348,7 +469,7 @@ export const SamplePage = () => {
                   Updated By
                 </Typography>
                 <Typography variant="body1">
-                  {selectedSample.updatedBy || 'N/A'}
+                  {selectedSample.updatedBy || "N/A"}
                 </Typography>
               </Box>
             </Stack>
@@ -368,8 +489,19 @@ export const SamplePage = () => {
       >
         <DialogTitle>Confirm Delete</DialogTitle>
         <DialogContent>
+          {deleteError &&
+            (() => {
+              const { status, message } = getErrorParts(deleteError);
+              return (
+                <Alert severity="error" sx={{ mb: 2 }}>
+                  {status ? `Erreur ${status} — ` : ""}
+                  {message || "La suppression a échoué."}
+                </Alert>
+              );
+            })()}
           <Typography>
-            Are you sure you want to delete this sample? This action cannot be undone.
+            Are you sure you want to delete this sample? This action cannot be
+            undone.
           </Typography>
         </DialogContent>
         <DialogActions>
@@ -380,7 +512,7 @@ export const SamplePage = () => {
             color="error"
             disabled={isDeleting}
           >
-            {isDeleting ? <CircularProgress size={24} /> : 'Delete'}
+            {isDeleting ? <CircularProgress size={24} /> : "Delete"}
           </Button>
         </DialogActions>
       </Dialog>
