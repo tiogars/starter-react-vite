@@ -15,6 +15,20 @@ RUN pnpm install --frozen-lockfile
 # Copy source code
 COPY . .
 
+# Build argument to specify which env file to use (default: .env.production)
+ARG ENV_FILE=.env.production
+
+# Copy the environment file if it exists, renaming it to .env for Vite
+# This allows the build to use production environment variables
+RUN if [ -f "${ENV_FILE}" ]; then \
+      echo "Using ${ENV_FILE} for build"; \
+      cp "${ENV_FILE}" .env; \
+    elif [ -f ".env" ]; then \
+      echo "Using existing .env file for build"; \
+    else \
+      echo "No environment file found, building with defaults"; \
+    fi
+
 # Build the application
 RUN pnpm run build
 

@@ -12,3 +12,6 @@ pnpm-debug.log*
 coverage
 .env.local
 .env.*.local
+# Allow .env and .env.production for Docker builds
+!.env
+!.env.production
