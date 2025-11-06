@@ -4,6 +4,15 @@
 
 This Docker configuration allows you to build the React application with custom environment variables for production. The environment variables are baked into the build during the Docker image creation process.
 
+## ⚠️ Important Security Notice
+
+**WARNING**: Environment variables are embedded into the client-side JavaScript bundle during the build process. This means:
+
+- All values will be visible in the browser's developer tools and network traffic
+- **NEVER include sensitive secrets, API keys, or credentials** in these environment files
+- Only use these for non-sensitive configuration like API endpoints, feature flags, or public identifiers
+- For sensitive data, use server-side environment variables or a secure configuration service
+
 ## How It Works
 
 The Dockerfile supports injecting environment variables during the build stage through the `ENV_FILE` build argument. This allows you to:
