@@ -7,6 +7,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      # Optional: specify a custom env file for the build
+      # args:
+      #   ENV_FILE: .env.production
     ports:
       - "8080:80"
   app-prod:
