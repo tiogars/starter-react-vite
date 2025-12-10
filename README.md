@@ -9,6 +9,19 @@ docker login ghcr.io
 docker pull ghcr.io/tiogars/starter-react-vite:latest
 ```
 
+## Docker Build with Custom Environment
+
+To build a Docker image with custom environment variables for production, see [DOCKER_BUILD.md](./DOCKER_BUILD.md) for detailed instructions.
+
+Quick example:
+```bash
+# Build with default .env.production
+docker build -t my-app .
+
+# Build with a custom environment file
+docker build --build-arg ENV_FILE=.env.staging -t my-app:staging .
+```
+
 ## Commands used to create the project
 
 ```bash
