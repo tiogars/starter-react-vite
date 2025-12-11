@@ -1,6 +1,7 @@
 import { createTheme } from '@mui/material/styles';
 import type { ThemeOptions } from '@mui/material/styles';
 import type { ThemeMode } from '../store/themeSlice';
+import { themeDataGrid } from './themeDatagrid';
 
 // Options communes aux deux thèmes
 const commonOptions: ThemeOptions = {
@@ -25,6 +26,14 @@ const commonOptions: ThemeOptions = {
         },
       },
     },
+    MuiDataGrid: {
+      styleOverrides: {
+        root: {
+          border: 'none',
+        },
+      },
+    },
+    ...themeDataGrid.components
   },
 };
 
