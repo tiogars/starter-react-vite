@@ -1,29 +1,18 @@
-import { Link as RouterLink } from "react-router";
 import {
   Box,
-  Toolbar,
-  Typography,
   Drawer,
   List,
   ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  Toolbar,
+  Typography,
 } from "@mui/material";
-import HomeIcon from "@mui/icons-material/Home";
-import FeaturesIcon from "@mui/icons-material/Star";
-import AccountTreeIcon from "@mui/icons-material/AccountTree";
-import RouteIcon from "@mui/icons-material/Route";
+import { Link as RouterLink } from "react-router";
+import { useAppIcons as useAppIcons } from "../../hooks/hookIcons";
 
 const drawerWidth = 240;
-
-const menuItems = [
-  { text: "Home", path: "/", icon: <HomeIcon /> },
-  { text: "Features", path: "/features", icon: <FeaturesIcon /> },
-  { text: "Routes", path: "/routes", icon: <RouteIcon /> },
-  { text: "Architecture", path: "/architecture", icon: <AccountTreeIcon /> },
-  { text: "Samples", path: "/samples", icon: <AccountTreeIcon /> },
-];
 
 interface NavigationDrawerProps {
   mobileOpen: boolean;
@@ -37,29 +26,40 @@ const DrawerContent = ({
 }: {
   onClose: () => void;
   isMobile: boolean;
-}) => (
-  <Box>
-    <Toolbar>
-      <Typography variant="h6" noWrap component="div">
-        React Vite App
-      </Typography>
-    </Toolbar>
-    <List>
-      {menuItems.map((item) => (
-        <ListItem key={item.text} disablePadding>
-          <ListItemButton
-            component={RouterLink}
-            to={item.path}
-            onClick={isMobile ? onClose : undefined}
-          >
-            <ListItemIcon>{item.icon}</ListItemIcon>
-            <ListItemText primary={item.text} />
-          </ListItemButton>
-        </ListItem>
-      ))}
-    </List>
-  </Box>
-);
+}) => {
+  const { getIcon} = useAppIcons();
+
+  const menuItems = [
+    { text: "Home", path: "/", icon: getIcon("home") },
+    { text: "Features", path: "/features", icon: getIcon("features") },
+    { text: "Routes", path: "/routes", icon: getIcon("routes") },
+    { text: "Architecture", path: "/architecture", icon: getIcon("architecture") },
+    { text: "Samples", path: "/samples", icon: getIcon("samples") },
+  ];
+  return (
+    <Box>
+      <Toolbar>
+        <Typography variant="h6" noWrap component="div">
+          React Vite App
+        </Typography>
+      </Toolbar>
+      <List>
+        {menuItems.map((item) => (
+          <ListItem key={item.text} disablePadding>
+            <ListItemButton
+              component={RouterLink}
+              to={item.path}
+              onClick={isMobile ? onClose : undefined}
+            >
+              <ListItemIcon>{item.icon}</ListItemIcon>
+              <ListItemText primary={item.text} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+    </Box>
+  );
+};
 
 export const NavigationDrawer = ({
   mobileOpen,
