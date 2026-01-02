@@ -40,7 +40,36 @@ import {
 } from "../../store/sampleApi";
 
 const SamplePage = () => {
-  // Helper pour parser les erreurs RTK Query (FetchBaseQueryError | SerializedError)
+  // Helper functions for error parsing
+  const isObj = (v: unknown): v is Record<string, unknown> =>
+    !!v && typeof v === "object";
+
+  const handleStringStatusErrors = (statusVal: string) => {
+    const errorMessages: Record<string, string> = {
+      TIMEOUT_ERROR: `Request timed out after ${Math.round(
+        API_TIMEOUT_MS / 1000
+      )} seconds (configured timeout).`,
+      FETCH_ERROR: "Network error: unable to reach the server.",
+      PARSING_ERROR: "Error while processing the server response.",
+    };
+    
+    const message = errorMessages[statusVal];
+    return message ? { message } : null;
+  };
+
+  const handleFetchBaseQueryError = (err: FetchBaseQueryError & { data?: unknown }) => {
+    const status = typeof err.status === "number" ? err.status : undefined;
+    const data = (err.data ?? {}) as {
+      message?: string;
+      error?: string;
+      violations?: Record<string, string>;
+    };
+    const message = data.message || data.error;
+    const violations = data.violations;
+    return { status, message, violations };
+  };
+
+  // Helper to parse RTK Query errors (FetchBaseQueryError | SerializedError)
   const getErrorParts = (
     err: unknown
   ): {
@@ -48,63 +77,53 @@ const SamplePage = () => {
     message?: string;
     violations?: Record<string, string>;
   } => {
-    const isObj = (v: unknown): v is Record<string, unknown> =>
-      !!v && typeof v === "object";
-    if (isObj(err) && "status" in err) {
-      // Gestion des erreurs spéciales de fetchBaseQuery (TIMEOUT_ERROR, FETCH_ERROR, PARSING_ERROR)
-      const statusVal = (err as { status: unknown }).status;
-      if (typeof statusVal === "string") {
-        if (statusVal === "TIMEOUT_ERROR") {
-          return {
-            message: `La requête a expiré après ${Math.round(
-              API_TIMEOUT_MS / 1000
-            )} secondes (timeout configuré).`,
-          };
-        }
-        if (statusVal === "FETCH_ERROR") {
-          return {
-            message: "Erreur réseau: impossible de joindre le serveur.",
-          };
-        }
-        if (statusVal === "PARSING_ERROR") {
-          return {
-            message: "Erreur lors du traitement de la réponse du serveur.",
-          };
-        }
-      }
-      const e = err as FetchBaseQueryError & { data?: unknown };
-      const status = typeof e.status === "number" ? e.status : undefined;
-      const data = (e.data ?? {}) as {
-        message?: string;
-        error?: string;
-        violations?: Record<string, string>;
-      };
-      const message = data.message || data.error;
-      const violations = data.violations;
-      return { status, message, violations };
+    if (!isObj(err)) {
+      return typeof err === "string" ? { message: err } : {};
     }
-    if (isObj(err) && ("message" in err || "name" in err)) {
+
+    if ("status" in err) {
+      const statusVal = (err as { status: unknown }).status;
+      
+      if (typeof statusVal === "string") {
+        const stringError = handleStringStatusErrors(statusVal);
+        if (stringError) return stringError;
+      }
+      
+      return handleFetchBaseQueryError(err as FetchBaseQueryError & { data?: unknown });
+    }
+
+    if ("message" in err || "name" in err) {
       const e = err as SerializedError;
       return { message: e.message || e.name };
     }
-    if (typeof err === "string") return { message: err };
+
     return {};
   };
 
-  // État local pour les dialogues et la sélection
+  // Helper to format consistent error messages
+  const formatErrorMessage = (
+    errorParts: { status?: number; message?: string },
+    defaultMessage: string
+  ) => {
+    const statusPrefix = errorParts.status ? `Error ${errorParts.status} — ` : "";
+    const message = errorParts.message || defaultMessage;
+    return `${statusPrefix}${message}`;
+  };
+
+  // Local state for dialogs and selection
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedSampleId, setSelectedSampleId] = useState<number | null>(null);
 
-  // Formulaire de création
+  // Create form state
   const [formData, setFormData] = useState<SampleCreateForm>({
     name: "",
     description: "",
     active: true,
   });
 
-  // Queries et Mutations RTK Query
+  // RTK Query hooks
   const { data: samples, isLoading, error, refetch } = useGetAllSamplesQuery();
   const {
     data: selectedSample,
@@ -128,7 +147,7 @@ const SamplePage = () => {
     { isLoading: isDeleting, error: deleteError },
   ] = useDeleteSampleMutation();
 
-  // Handlers pour les dialogues
+  // Dialog handlers
   const handleOpenCreateDialog = () => {
     setFormData({ name: "", description: "", active: true });
     // Clear any previous error state from the create mutation
@@ -161,7 +180,7 @@ const SamplePage = () => {
     setSelectedSampleId(null);
   };
 
-  // Handler pour la création
+  // Create handler
   const handleCreateSample = async () => {
     try {
       await createSample({ sampleCreateForm: formData }).unwrap();
@@ -172,7 +191,7 @@ const SamplePage = () => {
     }
   };
 
-  // Handler pour la suppression
+  // Delete handler
   const handleDeleteSample = async () => {
     if (selectedSampleId) {
       try {
@@ -184,7 +203,7 @@ const SamplePage = () => {
     }
   };
 
-  // Formatage de la date
+  // Date formatting
   const formatDate = (dateString?: string) => {
     if (!dateString) return "N/A";
     return new Date(dateString).toLocaleString();
@@ -199,7 +218,7 @@ const SamplePage = () => {
       header="Sample Management"
       content="Manage all your samples with full CRUD operations"
     >
-      {/* Actions principales */}
+      {/* Primary actions */}
       <Box
         sx={{ mb: 3, display: "flex", gap: 2, justifyContent: "space-between" }}
       >
@@ -219,7 +238,7 @@ const SamplePage = () => {
         </Button>
       </Box>
 
-      {/* Gestion des états de chargement et d'erreur */}
+      {/* Loading and error states */}
       {isLoading && (
         <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
           <CircularProgress />
@@ -228,17 +247,19 @@ const SamplePage = () => {
 
       {error &&
         (() => {
-          const { status, message } = getErrorParts(error);
+          const pageErrorParts = getErrorParts(error);
+          const pageErrorMessage = formatErrorMessage(
+            pageErrorParts,
+            "An error occurred while loading samples."
+          );
           return (
             <Alert severity="error" sx={{ mb: 2 }}>
-              {status ? `Erreur ${status} — ` : ""}
-              {message ||
-                `Une erreur est survenue lors du chargement des samples.`}
+              {pageErrorMessage}
             </Alert>
           );
         })()}
 
-      {/* Table des samples */}
+      {/* Samples table */}
       {!isLoading && samples && (
         <Card>
           <CardContent>
@@ -302,7 +323,7 @@ const SamplePage = () => {
         </Card>
       )}
 
-      {/* Dialog de création */}
+      {/* Create dialog */}
       <SampleCreateDialog
         open={createDialogOpen}
         value={formData}
@@ -312,38 +333,35 @@ const SamplePage = () => {
         submitting={isCreating}
         errorMessage={
           isCreateError
-            ? `${createErrorParts.status ? `Erreur ${createErrorParts.status} — ` : ""}${
-                createErrorParts.message || "Echec de la création."
-              }`
+            ? formatErrorMessage(createErrorParts, "Creation failed.")
             : undefined
         }
         violations={createErrorParts.violations}
       />
 
-      {/* Dialog de visualisation */}
+      {/* Details dialog */}
       <SampleDetailsDialog
         open={viewDialogOpen}
         sample={selectedSample || undefined}
         isLoading={isLoadingSample}
         errorMessage={
           viewError
-            ? `${viewErrorParts.status ? `Erreur ${viewErrorParts.status} — ` : ""}${
-                viewErrorParts.message || "Impossible de charger les détails."
-              }`
+            ? formatErrorMessage(
+                viewErrorParts,
+                "Unable to load details."
+              )
             : undefined
         }
         onClose={handleCloseViewDialog}
       />
 
-      {/* Dialog de confirmation de suppression */}
+      {/* Delete confirmation dialog */}
       <DeleteConfirmDialog
         open={deleteDialogOpen}
         loading={isDeleting}
         errorMessage={
           deleteError
-            ? `${deleteErrorParts.status ? `Erreur ${deleteErrorParts.status} — ` : ""}${
-                deleteErrorParts.message || "La suppression a échoué."
-              }`
+            ? formatErrorMessage(deleteErrorParts, "Deletion failed.")
             : undefined
         }
         onCancel={handleCloseDeleteDialog}
