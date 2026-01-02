@@ -11,17 +11,25 @@ export default defineConfig(({ mode }) => {
   // Prefer the VITE_ prefixed value from loaded env; fall back to process.env
   const VITE_API_URL = env.VITE_API_URL || process.env.VITE_API_URL
 
+  const isDev = mode === 'development'
+
   return {
     plugins: [react()],
-    server: {
-      proxy: {
-        '/api': {
-          target: VITE_API_URL,
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, ''),
-        },
-      },
-    },
+    // Enable Vite dev server proxy only during development.
+    // Production build served by nginx will use the runtime reverse-proxy instead.
+    ...(isDev
+      ? {
+          server: {
+            proxy: {
+              '/api': {
+                target: VITE_API_URL,
+                changeOrigin: true,
+                rewrite: (path) => path.replace(/^\/api/, ''),
+              },
+            },
+          },
+        }
+      : {}),
     test: {
       environment: 'jsdom',
       setupFiles: './src/setupTests.ts',

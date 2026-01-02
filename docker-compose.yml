@@ -10,9 +10,13 @@ services:
       # Optional: specify a custom env file for the build
       # args:
       #   ENV_FILE: .env.production
+    env_file:
+      - .env.local
     ports:
-      - "8080:80"
+      - "8082:80"
   app-prod:
     image: tiogars/starter-react-vite:latest
+    env_file:
+      - .env.production
     ports:
       - "8081:80"
