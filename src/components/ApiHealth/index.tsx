@@ -1,13 +1,14 @@
-import { useState, useEffect } from "react";
-import { useGetAlactuatorHealthQuery } from "../../store/actuatorApi";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
+import { useEffect, useState } from "react";
+import { useGetAlactuatorHealthQuery } from "../../store/actuatorApi";
 import "./ApiHealth.css";
 
 const ApiHealth = () => {
-  const { data, error, isLoading, startedTimeStamp } = useGetAlactuatorHealthQuery(null, {
-    pollingInterval: 10000, // Recheck every 10s
-    refetchOnMountOrArgChange: true, // Reload on each mount
-  });
+  const { data, error, isLoading, startedTimeStamp } =
+    useGetAlactuatorHealthQuery(null, {
+      pollingInterval: 10000, // Recheck every 10s
+      refetchOnMountOrArgChange: true, // Reload on each mount
+    });
 
   const [countdown, setCountdown] = useState(10);
 
@@ -27,28 +28,36 @@ const ApiHealth = () => {
   if (isLoading) {
     status = (
       <span>
-        <FiberManualRecordIcon sx={{ color: "text.secondary", fontSize: 14, mr: 0.5 }} />
+        <FiberManualRecordIcon
+          sx={{ color: "text.secondary", fontSize: 14, mr: 0.5 }}
+        />
         Checking...
       </span>
     );
   } else if (error) {
     status = (
       <span className="api-health-error">
-        <FiberManualRecordIcon sx={{ color: "error.main", fontSize: 14, mr: 0.5 }} />
+        <FiberManualRecordIcon
+          sx={{ color: "error.main", fontSize: 14, mr: 0.5 }}
+        />
         API not OK
       </span>
     );
   } else if (data?.status === "UP") {
     status = (
       <span className="api-health-success">
-        <FiberManualRecordIcon sx={{ color: "success.main", fontSize: 14, mr: 0.5 }} />
+        <FiberManualRecordIcon
+          sx={{ color: "success.main", fontSize: 14, mr: 0.5 }}
+        />
         API OK
       </span>
     );
   } else {
     status = (
       <span className="api-health-unknown">
-        <FiberManualRecordIcon sx={{ color: "warning.main", fontSize: 14, mr: 0.5 }} />
+        <FiberManualRecordIcon
+          sx={{ color: "warning.main", fontSize: 14, mr: 0.5 }}
+        />
         API status unknown
       </span>
     );
@@ -56,7 +65,8 @@ const ApiHealth = () => {
 
   return (
     <div>
-      <strong>API status:</strong> {status} {countdown <= 3 && countdown > 0 && `(next check in ${countdown}s)`}
+      {status}{" "}
+      {countdown <= 3 && countdown > 0 && `(next check in ${countdown}s)`}
     </div>
   );
 };

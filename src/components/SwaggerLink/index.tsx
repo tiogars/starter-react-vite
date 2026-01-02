@@ -1,5 +1,4 @@
-import { Button, Link } from "@mui/material";
-import { Description as SwaggerIcon } from "@mui/icons-material";
+import { Link } from "@mui/material";
 import type { SwaggerLinkProps } from "./SwaggerLink.types";
 
 const SwaggerLink = (props: SwaggerLinkProps) => {
@@ -10,27 +9,8 @@ const SwaggerLink = (props: SwaggerLinkProps) => {
   }
 
   return (
-    <Link
-      href={swaggerUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      sx={{ textDecoration: 'none' }}
-    >
-      <Button
-        variant="outlined"
-        size="small"
-        startIcon={<SwaggerIcon />}
-        sx={{
-          borderColor: 'primary.main',
-          color: 'primary.main',
-          '&:hover': {
-            backgroundColor: 'primary.main',
-            color: 'primary.contrastText',
-          },
-        }}
-      >
-        {props.children || 'API Documentation'}
-      </Button>
+    <Link href={swaggerUrl} target="_blank" rel="noopener noreferrer">
+      {props.children || "API Documentation"}
     </Link>
   );
 };

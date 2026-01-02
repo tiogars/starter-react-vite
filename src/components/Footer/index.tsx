@@ -1,11 +1,11 @@
 import { Box, Divider, Stack } from "@mui/material";
 import ApiHealth from "../ApiHealth";
+import CopyrightNotice from "../CopyrightNotice";
+import GithubIssueLink from "../GithubIssueLink";
+import GithubLink from "../GithubLink";
+import PoweredBySection from "../PoweredBySection";
 import SwaggerLink from "../SwaggerLink";
 import Version from "../Version";
-import GithubLink from "../GithubLink";
-import GithubIssueLink from "../GithubIssueLink";
-import PoweredBySection from "../PoweredBySection";
-import CopyrightNotice from "../CopyrightNotice";
 
 const Footer = () => (
   <Box
@@ -32,8 +32,9 @@ const Footer = () => (
         <Version />
       </Stack>
       <Stack direction="row" spacing={1.5} alignItems="center" flexWrap="wrap">
-        <SwaggerLink>API documentation</SwaggerLink>
-        <ApiHealth />
+        <SwaggerLink>
+          <ApiHealth />
+        </SwaggerLink>
       </Stack>
       <Stack direction="row" spacing={1.5} alignItems="center" flexWrap="wrap">
         <GithubLink />
