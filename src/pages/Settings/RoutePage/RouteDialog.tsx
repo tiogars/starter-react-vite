@@ -10,6 +10,7 @@ import {
   Box,
 } from '@mui/material';
 import type { RouteDialogProps } from './RouteDialog.types';
+import type { RouteCreateForm, RouteUpdateForm } from '../../../store/routesApi';
 
 const RouteDialog = ({
   open,

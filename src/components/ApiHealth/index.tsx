@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
-import type { ApiHealthProps } from "./ApiHealth.types";
 import { useGetAlactuatorHealthQuery } from "../../store/actuatorApi";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import "./ApiHealth.css";
 
-const ApiHealth = (props: ApiHealthProps) => {
+const ApiHealth = () => {
   const { data, error, isLoading, startedTimeStamp } = useGetAlactuatorHealthQuery(null, {
     pollingInterval: 10000, // Recheck every 10s
     refetchOnMountOrArgChange: true, // Reload on each mount

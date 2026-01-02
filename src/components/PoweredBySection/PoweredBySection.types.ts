@@ -1,5 +1,3 @@
-import type { PoweredBySectionProps } from "./PoweredBySection.types";
-
 export interface PoweredByLink {
   label: string;
   url: string;

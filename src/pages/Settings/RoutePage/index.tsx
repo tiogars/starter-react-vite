@@ -13,8 +13,23 @@ import {
   type RouteUpdateForm,
 } from "../../../store/routesApi";
 import { useRouteGrid } from "./useRouteGrid";
-import DeleteConfirmDialog from "../../../components/DeleteConfirmDialog";
+import DeleteConfirmDialog from "./DeleteConfirmDialog";
 import RouteDialog from "./RouteDialog";
+
+const NoRoutesOverlay = () => (
+  <Box
+    sx={{
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      height: "100%",
+    }}
+  >
+    <Typography variant="body1" color="text.secondary">
+      No routes found. Click "Create Route" to add one.
+    </Typography>
+  </Box>
+);
 
 const RoutePage = (props: RoutePageProps) => {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -172,20 +187,7 @@ const RoutePage = (props: RoutePageProps) => {
             },
           }}
           slots={{
-            noRowsOverlay: () => (
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  height: "100%",
-                }}
-              >
-                <Typography variant="body1" color="text.secondary">
-                  No routes found. Click "Create Route" to add one.
-                </Typography>
-              </Box>
-            ),
+            noRowsOverlay: NoRoutesOverlay,
           }}
         />
       </Paper>

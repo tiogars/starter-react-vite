@@ -7,16 +7,18 @@ interface ThemeState {
   mode: ThemeMode;
 }
 
-// Récupérer le thème sauvegardé ou utiliser la préférence système
+// Retrieve the saved theme or fall back to system preference
 const getInitialTheme = (): ThemeMode => {
   const savedTheme = localStorage.getItem('theme-mode');
   if (savedTheme === 'light' || savedTheme === 'dark') {
     return savedTheme;
   }
-  // Utiliser la préférence système
-  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+
+  const matchMedia = globalThis?.matchMedia?.('(prefers-color-scheme: dark)');
+  if (matchMedia?.matches) {
     return 'dark';
   }
+
   return 'light';
 };
 
