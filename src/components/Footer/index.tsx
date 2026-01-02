@@ -32,13 +32,12 @@ const Footer = () => (
         <Version />
       </Stack>
       <Stack direction="row" spacing={1.5} alignItems="center" flexWrap="wrap">
+        <GithubLink />
+        <GithubIssueLink />
+        <Divider orientation="vertical" flexItem />
         <SwaggerLink>
           <ApiHealth />
         </SwaggerLink>
-      </Stack>
-      <Stack direction="row" spacing={1.5} alignItems="center" flexWrap="wrap">
-        <GithubLink />
-        <GithubIssueLink />
       </Stack>
       <Stack direction="row" spacing={1.5} alignItems="center" flexWrap="wrap">
         <PoweredBySection />
