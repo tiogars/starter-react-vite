@@ -5,6 +5,7 @@ Composant Layout principal qui enveloppe toutes les pages de l'application avec 
 ## Structure
 
 Le Layout comprend trois sections principales:
+
 1. **AppBar** - Barre de navigation supérieure
 2. **Drawer** - Menu latéral (permanent desktop / temporaire mobile)
 3. **Content Area** - Zone principale avec `<Outlet />` pour les pages enfants
@@ -14,6 +15,7 @@ Le Layout comprend trois sections principales:
 ### Navigation
 
 Menu avec icônes et texte pour chaque page:
+
 - Home → Page d'accueil
 - Routes → Gestion des routes
 
@@ -27,11 +29,13 @@ const menuItems = [
 ### Responsive Design
 
 **Desktop (≥ md breakpoint = 900px):**
+
 - Drawer permanent (240px de largeur)
 - AppBar avec largeur réduite pour accommoder le drawer
 - Boutons de navigation dans l'AppBar
 
 **Mobile (< md breakpoint):**
+
 - Drawer temporaire (overlay)
 - Bouton hamburger (MenuIcon) pour ouvrir/fermer le drawer
 - Le drawer se ferme automatiquement après sélection d'un item
