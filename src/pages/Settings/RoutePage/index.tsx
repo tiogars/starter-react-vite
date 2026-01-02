@@ -12,9 +12,9 @@ import {
   type RouteCreateForm,
   type RouteUpdateForm,
 } from "../../../store/routesApi";
-import { DeleteConfirmDialog } from "./DeleteConfirmDialog";
-import { RouteDialog } from "./RouteDialog";
 import { useRouteGrid } from "./useRouteGrid";
+import DeleteConfirmDialog from "../../../components/DeleteConfirmDialog";
+import RouteDialog from "./RouteDialog";
 
 const RoutePage = (props: RoutePageProps) => {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -234,6 +234,7 @@ const RoutePage = (props: RoutePageProps) => {
           {snackbar.message}
         </Alert>
       </Snackbar>
+      {props.children}
     </Box>
   );
 };

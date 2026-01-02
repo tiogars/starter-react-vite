@@ -1,9 +1,9 @@
 import { Outlet } from "react-router";
-import Footer from "./Footer";
+import Footer from "../Footer";
 import { AppBar, Box, Container, useTheme, useMediaQuery } from "@mui/material";
-import { LayoutToolbar } from "./LayoutToolbar";
 import { useState } from "react";
-import { NavigationDrawer } from "./NavigationDrawer";
+import LayoutToolbar from "../LayoutToolbar";
+import NavigationDrawer from "../NavigationDrawer";
 
 const drawerWidth = 240;
 

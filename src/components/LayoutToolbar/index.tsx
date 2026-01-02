@@ -7,8 +7,8 @@ import {
   Typography,
 } from '@mui/material';
 import { Link as RouterLink } from 'react-router';
+import ThemeToggle from '../ThemeToggle';
 import type { LayoutToolbarProps } from './LayoutToolbar.types';
-import { ThemeToggle } from '../ThemeToggle';
 
 const LayoutToolbar = ({ onMenuClick }: LayoutToolbarProps) => (
   <Toolbar>

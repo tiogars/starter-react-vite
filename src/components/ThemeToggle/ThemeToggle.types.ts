@@ -3,5 +3,5 @@
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface ThemeToggleProps {
-  // Props futures si nécessaire
+  children?: React.ReactNode;
 }
