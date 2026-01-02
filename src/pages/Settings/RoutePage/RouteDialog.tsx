@@ -9,17 +9,9 @@ import {
   TextField,
   Box,
 } from '@mui/material';
-import type { Route, RouteCreateForm, RouteUpdateForm } from '../../../store/routesApi';
+import type { RouteDialogProps } from './RouteDialog.types';
 
-interface RouteDialogProps {
-  open: boolean;
-  onClose: () => void;
-  onSubmit: (data: RouteCreateForm | RouteUpdateForm) => void;
-  initialData?: Route | null;
-  isLoading?: boolean;
-}
-
-export const RouteDialog = ({
+const RouteDialog = ({
   open,
   onClose,
   onSubmit,
@@ -139,3 +131,4 @@ export const RouteDialog = ({
     </Dialog>
   );
 };
+export default RouteDialog;

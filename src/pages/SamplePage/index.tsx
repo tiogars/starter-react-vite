@@ -39,7 +39,7 @@ import {
   type SampleCreateForm,
 } from "../../store/sampleApi";
 
-export const SamplePage = () => {
+const SamplePage = () => {
   // Helper pour parser les erreurs RTK Query (FetchBaseQueryError | SerializedError)
   const getErrorParts = (
     err: unknown

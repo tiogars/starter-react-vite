@@ -2,7 +2,7 @@ import { Button, Link } from "@mui/material";
 import { Description as SwaggerIcon } from "@mui/icons-material";
 import type { SwaggerLinkProps } from "./SwaggerLink.types";
 
-export const SwaggerLink = (props: SwaggerLinkProps) => {
+const SwaggerLink = (props: SwaggerLinkProps) => {
   const swaggerUrl = props.url || import.meta.env.VITE_SWAGGER_URL;
 
   if (!swaggerUrl) {

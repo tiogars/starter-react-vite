@@ -1,6 +1,6 @@
 import type { SampleComponentProps } from "./SampleComponent.types";
 
-export const SampleComponent = (props: SampleComponentProps) => {
+const SampleComponent = (props: SampleComponentProps) => {
   return (
     <>
       Argument : {props.argument}
@@ -8,4 +8,5 @@ export const SampleComponent = (props: SampleComponentProps) => {
     </>
   );
 };
+
 export default SampleComponent;

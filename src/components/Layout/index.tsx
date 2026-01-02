@@ -4,10 +4,11 @@ import { AppBar, Box, Container, useTheme, useMediaQuery } from "@mui/material";
 import { LayoutToolbar } from "./LayoutToolbar";
 import { useState } from "react";
 import { NavigationDrawer } from "./NavigationDrawer";
+import type { LayoutProps } from "./Layout.types";
 
 const drawerWidth = 240;
 
-export const Layout = () => {
+const Layout = (props: LayoutProps) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));

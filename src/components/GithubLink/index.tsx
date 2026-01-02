@@ -1,7 +1,8 @@
 import { Link } from "@mui/material";
+import type { GithubLinkProps } from "./GithubLink.types";
 import GitHubIcon from "@mui/icons-material/GitHub";
 
-export const GithubLink = () => {
+const GithubLink = (props: GithubLinkProps) => {
   return (
     <Link
       href="https://github.com/tiogars/starter-react-vite"

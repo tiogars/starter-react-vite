@@ -1,7 +1,7 @@
 import { Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography, CircularProgress } from "@mui/material";
 import type { DeleteConfirmDialogProps } from "./DeleteConfirmDialog.types";
 
-export const DeleteConfirmDialog = (props: DeleteConfirmDialogProps) => {
+const DeleteConfirmDialog = (props: DeleteConfirmDialogProps) => {
   const {
     open,
     title = "Confirm Delete",

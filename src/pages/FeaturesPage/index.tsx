@@ -17,7 +17,7 @@ import PaletteIcon from '@mui/icons-material/Palette';
 import RouteIcon from '@mui/icons-material/Route';
 import StorageIcon from '@mui/icons-material/Storage';
 
-export const FeaturesPage = () => {
+const FeaturesPage = () => {
   const features = [
     {
       title: 'Easy to Use',
@@ -57,15 +57,15 @@ export const FeaturesPage = () => {
         <Typography variant="h3" component="h1" gutterBottom>
           Features
         </Typography>
-        <Typography variant="body1" color="text.secondary" paragraph>
+        <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
           Discover all the features of our React + Vite starter application
         </Typography>
 
         <Box sx={{ mt: 4 }}>
           <List>
-            {features.map((feature, index) => (
+            {features.map((feature) => (
               <Paper
-                key={index}
+                key={feature.title}
                 elevation={2}
                 sx={{ mb: 2, transition: 'all 0.3s', '&:hover': { elevation: 4, transform: 'translateY(-2px)' } }}
               >

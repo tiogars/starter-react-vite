@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import type { ApiHealthProps } from "./ApiHealth.types";
 import { useGetAlactuatorHealthQuery } from "../../store/actuatorApi";
 import "./ApiHealth.css";
 
-const ApiHealth: React.FC = () => {
+const ApiHealth = (props: ApiHealthProps) => {
   const { data, error, isLoading, startedTimeStamp } = useGetAlactuatorHealthQuery(null, {
     pollingInterval: 10000, // Vérifie toutes les 10 secondes
     refetchOnMountOrArgChange: true, // Recharge à chaque montage

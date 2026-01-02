@@ -6,10 +6,11 @@ import {
   Button,
   Paper,
 } from '@mui/material';
+import type { ErrorPageProps } from './ErrorPage.types';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import HomeIcon from '@mui/icons-material/Home';
 
-export const ErrorPage = () => {
+const ErrorPage = (props: ErrorPageProps) => {
   const error = useRouteError();
 
   let errorMessage = 'An unexpected error occurred';

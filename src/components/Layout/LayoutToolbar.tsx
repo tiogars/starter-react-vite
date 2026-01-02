@@ -6,15 +6,11 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material';
-import React from 'react';
 import { Link as RouterLink } from 'react-router';
+import type { LayoutToolbarProps } from './LayoutToolbar.types';
 import { ThemeToggle } from '../ThemeToggle';
 
-interface LayoutToolbarProps {
-  onMenuClick: () => void;
-}
-
-export const LayoutToolbar: React.FC<LayoutToolbarProps> = ({ onMenuClick }) => (
+const LayoutToolbar = ({ onMenuClick }: LayoutToolbarProps) => (
   <Toolbar>
     <IconButton
       color="inherit"

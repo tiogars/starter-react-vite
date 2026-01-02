@@ -6,17 +6,9 @@ import {
   Button,
   Typography,
 } from '@mui/material';
-import type { Route } from "../../../store/routesApi";
+import type { DeleteConfirmDialogProps } from "./DeleteConfirmDialog.types";
 
-interface DeleteConfirmDialogProps {
-  open: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-  route: Route | null;
-  isLoading?: boolean;
-}
-
-export const DeleteConfirmDialog = ({
+const DeleteConfirmDialog = ({
   open,
   onClose,
   onConfirm,
@@ -50,3 +42,4 @@ export const DeleteConfirmDialog = ({
     </Dialog>
   );
 };
+export default DeleteConfirmDialog;

@@ -1,6 +1,6 @@
 import type { BasicPageProps } from "./BasicPage.types";
 
-export const BasicPage = (props: BasicPageProps) => {
+const BasicPage = (props: BasicPageProps) => {
   return (
     <>
       <h1>{props.header}</h1>

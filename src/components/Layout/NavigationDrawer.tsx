@@ -10,23 +10,15 @@ import {
   Typography,
 } from "@mui/material";
 import { Link as RouterLink } from "react-router";
-import { useAppIcons as useAppIcons } from "../../hooks/hookIcons";
+import type { NavigationDrawerProps, DrawerContentProps } from "./NavigationDrawer.types";
+import { useAppIcons } from "../../hooks/hookIcons";
 
 const drawerWidth = 240;
-
-interface NavigationDrawerProps {
-  mobileOpen: boolean;
-  onClose: () => void;
-  isMobile: boolean;
-}
 
 const DrawerContent = ({
   onClose,
   isMobile,
-}: {
-  onClose: () => void;
-  isMobile: boolean;
-}) => {
+}: DrawerContentProps) => {
   const { getIcon} = useAppIcons();
 
   const menuItems = [
@@ -61,7 +53,7 @@ const DrawerContent = ({
   );
 };
 
-export const NavigationDrawer = ({
+const NavigationDrawer = ({
   mobileOpen,
   onClose,
   isMobile,

@@ -2,6 +2,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { Alert, Box, Button, Paper, Snackbar, Typography } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { useState } from "react";
+import type { RoutePageProps } from './RoutePage.types';
 import {
   useCreateRouteMutation,
   useDeleteRouteMutation,
@@ -15,7 +16,7 @@ import { DeleteConfirmDialog } from "./DeleteConfirmDialog";
 import { RouteDialog } from "./RouteDialog";
 import { useRouteGrid } from "./useRouteGrid";
 
-export const RoutePage = () => {
+const RoutePage = (props: RoutePageProps) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedRoute, setSelectedRoute] = useState<Route | null>(null);

@@ -1,6 +1,7 @@
 import BasicPage from "../../components/BasicPage";
 import { Link as RouterLink } from "react-router";
 import { Box, Button, Card, CardContent, Link, Stack } from "@mui/material";
+import type { HomePageProps } from "./HomePage.types";
 import RouteIcon from '@mui/icons-material/Route';
 import StarIcon from '@mui/icons-material/Star';
 
@@ -20,7 +21,7 @@ const usefulLinks = {
   ],
 };
 
-export const HomePage = () => {
+const HomePage = (props: HomePageProps) => {
   return (
     <BasicPage
       header="Welcome to the Basic Page"

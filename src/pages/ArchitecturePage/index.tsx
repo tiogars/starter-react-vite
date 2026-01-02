@@ -1,4 +1,5 @@
 import { Box, Card, CardContent, Link, Stack, Typography } from "@mui/material";
+import type { ArchitecturePageProps } from './ArchitecturePage.types';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import SearchIcon from '@mui/icons-material/Search';
@@ -19,7 +20,7 @@ const architectureServices = [
   },
 ];
 
-export const ArchitecturePage = () => {
+const ArchitecturePage = (props: ArchitecturePageProps) => {
   return (
     <>
       <Box sx={{ mb: 4 }}>
