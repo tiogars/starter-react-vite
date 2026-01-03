@@ -1,11 +1,10 @@
-import type { SampleUpdateForm } from "../../store/sampleApi";
+import type { Sample, SampleUpdateForm } from "../../store/sampleApi";
 
 export interface SampleUpdateDialogProps {
   open: boolean;
-  value: SampleUpdateForm;
-  onChange: (value: SampleUpdateForm) => void;
+  initialData?: Sample;
   onCancel: () => void;
-  onSubmit: () => void;
+  onSubmit: (data: SampleUpdateForm) => void;
   submitting?: boolean;
   errorMessage?: string;
   violations?: Record<string, string>;
