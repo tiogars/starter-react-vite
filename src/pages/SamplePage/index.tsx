@@ -273,7 +273,7 @@ const SamplePage = () => {
 
   // Update handler
   const handleUpdateSample = async () => {
-    if (selectedSampleId && updateFormData.id) {
+    if (updateFormData.id) {
       try {
         await updateSample({ 
           id: updateFormData.id, 
