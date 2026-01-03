@@ -314,6 +314,7 @@ const SamplePage = () => {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch (err) {
+      // Error is automatically captured in exportError state by RTK Query
       console.error("Failed to export samples:", err);
     }
   };
