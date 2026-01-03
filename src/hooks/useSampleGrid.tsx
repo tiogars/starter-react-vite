@@ -74,5 +74,3 @@ export const useSampleGrid = ({
   ];
   return { columns };
 };
-
-export default useSampleGrid;

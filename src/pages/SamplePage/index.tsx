@@ -153,25 +153,27 @@ const SamplePage = () => {
     { isLoading: isDeleting, error: deleteError },
   ] = useDeleteSampleMutation();
 
+  // Helper to build search request from current state
+  const buildSearchRequest = (): SampleSearchRequest => ({
+    page: paginationModel.page,
+    pageSize: paginationModel.pageSize,
+    sortModel: sortModel.map((sort) => ({
+      field: sort.field,
+      sort: sort.sort || "asc",
+    })),
+    filterModel: {
+      items: filterModel.items.map((item) => ({
+        field: item.field,
+        operator: item.operator,
+        value: item.value,
+      })),
+      logicOperator: filterModel.logicOperator || "and",
+    },
+  });
+
   // Load samples when pagination, sort, or filter changes
   useEffect(() => {
-    const searchRequest: SampleSearchRequest = {
-      page: paginationModel.page,
-      pageSize: paginationModel.pageSize,
-      sortModel: sortModel.map((sort) => ({
-        field: sort.field,
-        sort: sort.sort || "asc",
-      })),
-      filterModel: {
-        items: filterModel.items.map((item) => ({
-          field: item.field,
-          operator: item.operator,
-          value: item.value,
-        })),
-        logicOperator: filterModel.logicOperator || "and",
-      },
-    };
-    searchSamples({ sampleSearchRequest: searchRequest });
+    searchSamples({ sampleSearchRequest: buildSearchRequest() });
   }, [paginationModel, sortModel, filterModel, searchSamples]);
 
   // Update rowCount when search response changes
@@ -222,24 +224,7 @@ const SamplePage = () => {
       await createSample({ sampleCreateForm: formData }).unwrap();
       handleCloseCreateDialog();
       // Refresh the list
-      searchSamples({
-        sampleSearchRequest: {
-          page: paginationModel.page,
-          pageSize: paginationModel.pageSize,
-          sortModel: sortModel.map((sort) => ({
-            field: sort.field,
-            sort: sort.sort || "asc",
-          })),
-          filterModel: {
-            items: filterModel.items.map((item) => ({
-              field: item.field,
-              operator: item.operator,
-              value: item.value,
-            })),
-            logicOperator: filterModel.logicOperator || "and",
-          },
-        },
-      });
+      searchSamples({ sampleSearchRequest: buildSearchRequest() });
     } catch (err) {
       // The error will be available in createError; UI below will surface it
       console.error("Failed to create sample:", err);
@@ -253,24 +238,7 @@ const SamplePage = () => {
         await deleteSample({ id: selectedSampleId }).unwrap();
         handleCloseDeleteDialog();
         // Refresh the list
-        searchSamples({
-          sampleSearchRequest: {
-            page: paginationModel.page,
-            pageSize: paginationModel.pageSize,
-            sortModel: sortModel.map((sort) => ({
-              field: sort.field,
-              sort: sort.sort || "asc",
-            })),
-            filterModel: {
-              items: filterModel.items.map((item) => ({
-                field: item.field,
-                operator: item.operator,
-                value: item.value,
-              })),
-              logicOperator: filterModel.logicOperator || "and",
-            },
-          },
-        });
+        searchSamples({ sampleSearchRequest: buildSearchRequest() });
       } catch (err) {
         console.error("Failed to delete sample:", err);
       }
@@ -279,24 +247,7 @@ const SamplePage = () => {
 
   // Refresh handler
   const handleRefresh = () => {
-    searchSamples({
-      sampleSearchRequest: {
-        page: paginationModel.page,
-        pageSize: paginationModel.pageSize,
-        sortModel: sortModel.map((sort) => ({
-          field: sort.field,
-          sort: sort.sort || "asc",
-        })),
-        filterModel: {
-          items: filterModel.items.map((item) => ({
-            field: item.field,
-            operator: item.operator,
-            value: item.value,
-          })),
-          logicOperator: filterModel.logicOperator || "and",
-        },
-      },
-    });
+    searchSamples({ sampleSearchRequest: buildSearchRequest() });
   };
 
   const createErrorParts = getErrorParts(createError);
