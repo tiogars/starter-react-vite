@@ -296,10 +296,12 @@ const SamplePage = () => {
   // Export handler
   const handleExport = async () => {
     try {
+      const format = "json";
+      const useZip = true;
       const result = await exportSamples({
         sampleExportForm: {
-          format: "json",
-          zip: false,
+          format,
+          zip: useZip,
           searchRequest: buildSearchRequest(),
         },
       }).unwrap();
@@ -308,7 +310,8 @@ const SamplePage = () => {
       const url = window.URL.createObjectURL(result);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `samples-export-${new Date().toISOString().split("T")[0]}.json`;
+      const fileExtension = useZip ? "zip" : format;
+      link.download = `samples-export-${new Date().toISOString().split("T")[0]}.${fileExtension}`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);

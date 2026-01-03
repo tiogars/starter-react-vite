@@ -83,6 +83,7 @@ const injectedRtkApi = api
           url: `/sample/export`,
           method: "POST",
           body: queryArg.sampleExportForm,
+          responseHandler: (response) => response.blob(),
         }),
         invalidatesTags: ["sample"],
       }),
