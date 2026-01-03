@@ -1,5 +1,6 @@
 import AddIcon from "@mui/icons-material/Add";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import DownloadIcon from "@mui/icons-material/Download";
 import {
   Alert,
   Box,
@@ -30,6 +31,7 @@ import {
   useDeleteSampleMutation,
   useSearchSamplesMutation,
   useGetSampleQuery,
+  useExportSamplesMutation,
   type Sample,
   type SampleCreateForm,
   type SampleUpdateForm,
@@ -159,6 +161,10 @@ const SamplePage = () => {
     deleteSample,
     { isLoading: isDeleting, error: deleteError },
   ] = useDeleteSampleMutation();
+  const [
+    exportSamples,
+    { isLoading: isExporting, error: exportError },
+  ] = useExportSamplesMutation();
 
   // Helper to build search request from current state
   const buildSearchRequest = (): SampleSearchRequest => ({
@@ -287,10 +293,37 @@ const SamplePage = () => {
     searchSamples({ sampleSearchRequest: buildSearchRequest() });
   };
 
+  // Export handler
+  const handleExport = async () => {
+    try {
+      const result = await exportSamples({
+        sampleExportForm: {
+          format: "json",
+          zip: false,
+          searchRequest: buildSearchRequest(),
+        },
+      }).unwrap();
+
+      // Create a download link for the blob
+      const url = window.URL.createObjectURL(result);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `samples-export-${new Date().toISOString().split("T")[0]}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      // Error is automatically captured in exportError state by RTK Query
+      console.error("Failed to export samples:", err);
+    }
+  };
+
   const createErrorParts = getErrorParts(createError);
   const updateErrorParts = getErrorParts(updateError);
   const deleteErrorParts = getErrorParts(deleteError);
   const viewErrorParts = getErrorParts(viewError);
+  const exportErrorParts = getErrorParts(exportError);
 
   const { columns } = useSampleGrid({
     onView: handleOpenViewDialog,
@@ -329,13 +362,23 @@ const SamplePage = () => {
         >
           Create Sample
         </Button>
-        <Button
-          variant="outlined"
-          startIcon={<RefreshIcon />}
-          onClick={handleRefresh}
-        >
-          Refresh
-        </Button>
+        <Box sx={{ display: "flex", gap: 2 }}>
+          <Button
+            variant="outlined"
+            startIcon={<DownloadIcon />}
+            onClick={handleExport}
+            disabled={isExporting || samples.length === 0}
+          >
+            {isExporting ? "Exporting..." : "Export"}
+          </Button>
+          <Button
+            variant="outlined"
+            startIcon={<RefreshIcon />}
+            onClick={handleRefresh}
+          >
+            Refresh
+          </Button>
+        </Box>
       </Box>
 
       {/* Error state */}
@@ -349,6 +392,20 @@ const SamplePage = () => {
           return (
             <Alert severity="error" sx={{ mb: 2 }}>
               {pageErrorMessage}
+            </Alert>
+          );
+        })()}
+
+      {/* Export error state */}
+      {exportError &&
+        (() => {
+          const exportErrorMessage = formatErrorMessage(
+            exportErrorParts,
+            "An error occurred while exporting samples."
+          );
+          return (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {exportErrorMessage}
             </Alert>
           );
         })()}
