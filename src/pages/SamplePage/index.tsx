@@ -114,6 +114,7 @@ const SamplePage = () => {
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedSampleId, setSelectedSampleId] = useState<number | null>(null);
+  const [selectedSampleForUpdate, setSelectedSampleForUpdate] = useState<Sample | undefined>(undefined);
 
   // DataGrid state
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
@@ -125,21 +126,6 @@ const SamplePage = () => {
     items: [],
   });
   const [rowCount, setRowCount] = useState(0);
-
-  // Create form state
-  const [formData, setFormData] = useState<SampleCreateForm>({
-    name: "",
-    description: "",
-    active: true,
-  });
-
-  // Update form state
-  const [updateFormData, setUpdateFormData] = useState<SampleUpdateForm>({
-    id: undefined,
-    name: "",
-    description: "",
-    active: true,
-  });
 
   // RTK Query hooks
   const [searchSamples, { data: searchResponse, isLoading, error }] = useSearchSamplesMutation();
@@ -208,7 +194,6 @@ const SamplePage = () => {
 
   // Dialog handlers
   const handleOpenCreateDialog = () => {
-    setFormData({ name: "", description: "", active: true });
     // Clear any previous error state from the create mutation
     resetCreate();
     setCreateDialogOpen(true);
@@ -216,16 +201,10 @@ const SamplePage = () => {
 
   const handleCloseCreateDialog = () => {
     setCreateDialogOpen(false);
-    setFormData({ name: "", description: "", active: true });
   };
 
   const handleOpenUpdateDialog = (sample: Sample) => {
-    setUpdateFormData({
-      id: sample.id,
-      name: sample.name,
-      description: sample.description,
-      active: sample.active,
-    });
+    setSelectedSampleForUpdate(sample);
     setSelectedSampleId(sample.id!);
     // Clear any previous error state from the update mutation
     resetUpdate();
@@ -234,7 +213,7 @@ const SamplePage = () => {
 
   const handleCloseUpdateDialog = () => {
     setUpdateDialogOpen(false);
-    setUpdateFormData({ id: undefined, name: "", description: "", active: true });
+    setSelectedSampleForUpdate(undefined);
     setSelectedSampleId(null);
   };
 
@@ -259,7 +238,7 @@ const SamplePage = () => {
   };
 
   // Create handler
-  const handleCreateSample = async () => {
+  const handleCreateSample = async (formData: SampleCreateForm) => {
     try {
       await createSample({ sampleCreateForm: formData }).unwrap();
       handleCloseCreateDialog();
@@ -272,7 +251,7 @@ const SamplePage = () => {
   };
 
   // Update handler
-  const handleUpdateSample = async () => {
+  const handleUpdateSample = async (updateFormData: SampleUpdateForm) => {
     if (updateFormData.id) {
       try {
         await updateSample({ 
@@ -411,8 +390,6 @@ const SamplePage = () => {
       {/* Create dialog */}
       <SampleCreateDialog
         open={createDialogOpen}
-        value={formData}
-        onChange={setFormData}
         onCancel={handleCloseCreateDialog}
         onSubmit={handleCreateSample}
         submitting={isCreating}
@@ -427,8 +404,7 @@ const SamplePage = () => {
       {/* Update dialog */}
       <SampleUpdateDialog
         open={updateDialogOpen}
-        value={updateFormData}
-        onChange={setUpdateFormData}
+        initialData={selectedSampleForUpdate}
         onCancel={handleCloseUpdateDialog}
         onSubmit={handleUpdateSample}
         submitting={isUpdating}
