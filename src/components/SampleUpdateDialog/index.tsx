@@ -42,14 +42,14 @@ export const SampleUpdateDialog = (props: SampleUpdateDialogProps) => {
   });
 
   useEffect(() => {
-    if (initialData) {
+    if (open && initialData) {
       reset({
         id: initialData.id,
         name: initialData.name,
         description: initialData.description,
         active: initialData.active,
       });
-    } else {
+    } else if (open) {
       reset({
         id: undefined,
         name: "",
@@ -60,12 +60,14 @@ export const SampleUpdateDialog = (props: SampleUpdateDialogProps) => {
   }, [initialData, reset, open]);
 
   const handleFormSubmit = (data: SampleUpdateForm) => {
-    if (initialData?.id) {
-      onSubmit({
-        ...data,
-        id: initialData.id,
-      });
+    if (!initialData?.id) {
+      console.error("Cannot submit update form without a valid ID");
+      return;
     }
+    onSubmit({
+      ...data,
+      id: initialData.id,
+    });
   };
 
   const handleClose = () => {

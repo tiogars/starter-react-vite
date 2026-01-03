@@ -40,8 +40,12 @@ export const SampleCreateDialog = (props: SampleCreateDialogProps) => {
   });
 
   useEffect(() => {
-    if (!open) {
-      reset();
+    if (open) {
+      reset({
+        name: "",
+        description: "",
+        active: true,
+      });
     }
   }, [open, reset]);
 
