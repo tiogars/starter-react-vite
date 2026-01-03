@@ -75,6 +75,17 @@ const injectedRtkApi = api
         }),
         invalidatesTags: ["sample"],
       }),
+      exportSamples: build.mutation<
+        ExportSamplesApiResponse,
+        ExportSamplesApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/sample/export`,
+          method: "POST",
+          body: queryArg.sampleExportForm,
+        }),
+        invalidatesTags: ["sample"],
+      }),
     }),
     overrideExisting: false,
   });
@@ -114,6 +125,11 @@ export type ImportSamplesApiResponse =
   /** status 200 Import completed with detailed report */ SampleImportReport;
 export type ImportSamplesApiArg = {
   sampleImportForm: SampleImportForm;
+};
+export type ExportSamplesApiResponse =
+  /** status 200 Export completed successfully */ Blob;
+export type ExportSamplesApiArg = {
+  sampleExportForm: SampleExportForm;
 };
 export type Sample = {
   id?: number;
@@ -193,6 +209,11 @@ export type SampleImportReport = {
 export type SampleImportForm = {
   samples: SampleCreateForm[];
 };
+export type SampleExportForm = {
+  format: string;
+  zip?: boolean;
+  searchRequest?: SampleSearchRequest;
+};
 export const {
   useGetSampleQuery,
   useUpdateSampleMutation,
@@ -202,4 +223,5 @@ export const {
   useSearchSamplesMutation,
   useInitSamplesMutation,
   useImportSamplesMutation,
+  useExportSamplesMutation,
 } = injectedRtkApi;
