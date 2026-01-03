@@ -5,12 +5,14 @@ import type {
   UseSampleGridResult,
 } from "./useSampleGrid.types";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import { Chip } from "@mui/material";
 
 export const useSampleGrid = ({
   onView,
+  onEdit,
   onDelete,
 }: UseSampleGridProps): UseSampleGridResult => {
   const columns: GridColDef<Sample>[] = [
@@ -61,6 +63,12 @@ export const useSampleGrid = ({
           icon={<VisibilityIcon />}
           label="View"
           onClick={() => onView(params.row)}
+          showInMenu={false}
+        />,
+        <GridActionsCellItem
+          icon={<EditIcon />}
+          label="Edit"
+          onClick={() => onEdit(params.row)}
           showInMenu={false}
         />,
         <GridActionsCellItem

@@ -20,16 +20,19 @@ import type { SerializedError } from "@reduxjs/toolkit";
 import { useState, useEffect } from "react";
 import BasicPage from "../../components/BasicPage";
 import SampleCreateDialog from "../../components/SampleCreateDialog";
+import SampleUpdateDialog from "../../components/SampleUpdateDialog";
 import SampleDetailsDialog from "../../components/SampleDetailsDialog";
 import DeleteConfirmDialog from "../../components/DeleteConfirmDialog";
 import { API_TIMEOUT_MS } from "../../store/emptyApi";
 import {
   useCreateSampleMutation,
+  useUpdateSampleMutation,
   useDeleteSampleMutation,
   useSearchSamplesMutation,
   useGetSampleQuery,
   type Sample,
   type SampleCreateForm,
+  type SampleUpdateForm,
   type SampleSearchRequest,
 } from "../../store/sampleApi";
 import { useSampleGrid } from "../../hooks/useSampleGrid";
@@ -107,6 +110,7 @@ const SamplePage = () => {
 
   // Local state for dialogs and selection
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedSampleId, setSelectedSampleId] = useState<number | null>(null);
@@ -124,6 +128,14 @@ const SamplePage = () => {
 
   // Create form state
   const [formData, setFormData] = useState<SampleCreateForm>({
+    name: "",
+    description: "",
+    active: true,
+  });
+
+  // Update form state
+  const [updateFormData, setUpdateFormData] = useState<SampleUpdateForm>({
+    id: undefined,
     name: "",
     description: "",
     active: true,
@@ -148,6 +160,15 @@ const SamplePage = () => {
       reset: resetCreate,
     },
   ] = useCreateSampleMutation();
+  const [
+    updateSample,
+    {
+      isLoading: isUpdating,
+      isError: isUpdateError,
+      error: updateError,
+      reset: resetUpdate,
+    },
+  ] = useUpdateSampleMutation();
   const [
     deleteSample,
     { isLoading: isDeleting, error: deleteError },
@@ -198,6 +219,25 @@ const SamplePage = () => {
     setFormData({ name: "", description: "", active: true });
   };
 
+  const handleOpenUpdateDialog = (sample: Sample) => {
+    setUpdateFormData({
+      id: sample.id,
+      name: sample.name,
+      description: sample.description,
+      active: sample.active,
+    });
+    setSelectedSampleId(sample.id!);
+    // Clear any previous error state from the update mutation
+    resetUpdate();
+    setUpdateDialogOpen(true);
+  };
+
+  const handleCloseUpdateDialog = () => {
+    setUpdateDialogOpen(false);
+    setUpdateFormData({ id: undefined, name: "", description: "", active: true });
+    setSelectedSampleId(null);
+  };
+
   const handleOpenViewDialog = (sample: Sample) => {
     setSelectedSampleId(sample.id!);
     setViewDialogOpen(true);
@@ -231,6 +271,24 @@ const SamplePage = () => {
     }
   };
 
+  // Update handler
+  const handleUpdateSample = async () => {
+    if (updateFormData.id) {
+      try {
+        await updateSample({ 
+          id: updateFormData.id, 
+          sampleUpdateForm: updateFormData 
+        }).unwrap();
+        handleCloseUpdateDialog();
+        // Refresh the list
+        searchSamples({ sampleSearchRequest: buildSearchRequest() });
+      } catch (err) {
+        // The error will be available in updateError; UI below will surface it
+        console.error("Failed to update sample:", err);
+      }
+    }
+  };
+
   // Delete handler
   const handleDeleteSample = async () => {
     if (selectedSampleId) {
@@ -251,11 +309,13 @@ const SamplePage = () => {
   };
 
   const createErrorParts = getErrorParts(createError);
+  const updateErrorParts = getErrorParts(updateError);
   const deleteErrorParts = getErrorParts(deleteError);
   const viewErrorParts = getErrorParts(viewError);
 
   const { columns } = useSampleGrid({
     onView: handleOpenViewDialog,
+    onEdit: handleOpenUpdateDialog,
     onDelete: handleOpenDeleteDialog,
   });
 
@@ -362,6 +422,22 @@ const SamplePage = () => {
             : undefined
         }
         violations={createErrorParts.violations}
+      />
+
+      {/* Update dialog */}
+      <SampleUpdateDialog
+        open={updateDialogOpen}
+        value={updateFormData}
+        onChange={setUpdateFormData}
+        onCancel={handleCloseUpdateDialog}
+        onSubmit={handleUpdateSample}
+        submitting={isUpdating}
+        errorMessage={
+          isUpdateError
+            ? formatErrorMessage(updateErrorParts, "Update failed.")
+            : undefined
+        }
+        violations={updateErrorParts.violations}
       />
 
       {/* Details dialog */}
