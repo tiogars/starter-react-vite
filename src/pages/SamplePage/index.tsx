@@ -1,30 +1,23 @@
 import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/Delete";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 import {
   Alert,
   Box,
   Button,
-  Card,
-  CardContent,
-  Chip,
-  CircularProgress,
-  IconButton,
   Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Typography,
 } from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
+import type {
+  GridPaginationModel,
+  GridSortModel,
+  GridFilterModel,
+} from "@mui/x-data-grid";
 import type {
   FetchBaseQueryError,
 } from "@reduxjs/toolkit/query";
 import type { SerializedError } from "@reduxjs/toolkit";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import BasicPage from "../../components/BasicPage";
 import SampleCreateDialog from "../../components/SampleCreateDialog";
 import SampleDetailsDialog from "../../components/SampleDetailsDialog";
@@ -33,11 +26,13 @@ import { API_TIMEOUT_MS } from "../../store/emptyApi";
 import {
   useCreateSampleMutation,
   useDeleteSampleMutation,
-  useGetAllSamplesQuery,
+  useSearchSamplesMutation,
   useGetSampleQuery,
   type Sample,
   type SampleCreateForm,
+  type SampleSearchRequest,
 } from "../../store/sampleApi";
+import { useSampleGrid } from "../../hooks/useSampleGrid";
 
 const SamplePage = () => {
   // Helper functions for error parsing
@@ -116,6 +111,17 @@ const SamplePage = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedSampleId, setSelectedSampleId] = useState<number | null>(null);
 
+  // DataGrid state
+  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
+    page: 0,
+    pageSize: 10,
+  });
+  const [sortModel, setSortModel] = useState<GridSortModel>([]);
+  const [filterModel, setFilterModel] = useState<GridFilterModel>({
+    items: [],
+  });
+  const [rowCount, setRowCount] = useState(0);
+
   // Create form state
   const [formData, setFormData] = useState<SampleCreateForm>({
     name: "",
@@ -124,7 +130,7 @@ const SamplePage = () => {
   });
 
   // RTK Query hooks
-  const { data: samples, isLoading, error, refetch } = useGetAllSamplesQuery();
+  const [searchSamples, { data: searchResponse, isLoading, error }] = useSearchSamplesMutation();
   const {
     data: selectedSample,
     isLoading: isLoadingSample,
@@ -147,6 +153,36 @@ const SamplePage = () => {
     { isLoading: isDeleting, error: deleteError },
   ] = useDeleteSampleMutation();
 
+  // Load samples when pagination, sort, or filter changes
+  useEffect(() => {
+    const searchRequest: SampleSearchRequest = {
+      page: paginationModel.page,
+      pageSize: paginationModel.pageSize,
+      sortModel: sortModel.map((sort) => ({
+        field: sort.field,
+        sort: sort.sort || "asc",
+      })),
+      filterModel: {
+        items: filterModel.items.map((item) => ({
+          field: item.field,
+          operator: item.operator,
+          value: item.value,
+        })),
+        logicOperator: filterModel.logicOperator || "and",
+      },
+    };
+    searchSamples({ sampleSearchRequest: searchRequest });
+  }, [paginationModel, sortModel, filterModel, searchSamples]);
+
+  // Update rowCount when search response changes
+  useEffect(() => {
+    if (searchResponse?.rowCount !== undefined) {
+      setRowCount(searchResponse.rowCount);
+    }
+  }, [searchResponse]);
+
+  const samples = searchResponse?.rows || [];
+
   // Dialog handlers
   const handleOpenCreateDialog = () => {
     setFormData({ name: "", description: "", active: true });
@@ -160,8 +196,8 @@ const SamplePage = () => {
     setFormData({ name: "", description: "", active: true });
   };
 
-  const handleOpenViewDialog = (id: number) => {
-    setSelectedSampleId(id);
+  const handleOpenViewDialog = (sample: Sample) => {
+    setSelectedSampleId(sample.id!);
     setViewDialogOpen(true);
   };
 
@@ -170,8 +206,8 @@ const SamplePage = () => {
     setSelectedSampleId(null);
   };
 
-  const handleOpenDeleteDialog = (id: number) => {
-    setSelectedSampleId(id);
+  const handleOpenDeleteDialog = (sample: Sample) => {
+    setSelectedSampleId(sample.id!);
     setDeleteDialogOpen(true);
   };
 
@@ -185,6 +221,25 @@ const SamplePage = () => {
     try {
       await createSample({ sampleCreateForm: formData }).unwrap();
       handleCloseCreateDialog();
+      // Refresh the list
+      searchSamples({
+        sampleSearchRequest: {
+          page: paginationModel.page,
+          pageSize: paginationModel.pageSize,
+          sortModel: sortModel.map((sort) => ({
+            field: sort.field,
+            sort: sort.sort || "asc",
+          })),
+          filterModel: {
+            items: filterModel.items.map((item) => ({
+              field: item.field,
+              operator: item.operator,
+              value: item.value,
+            })),
+            logicOperator: filterModel.logicOperator || "and",
+          },
+        },
+      });
     } catch (err) {
       // The error will be available in createError; UI below will surface it
       console.error("Failed to create sample:", err);
@@ -197,21 +252,76 @@ const SamplePage = () => {
       try {
         await deleteSample({ id: selectedSampleId }).unwrap();
         handleCloseDeleteDialog();
+        // Refresh the list
+        searchSamples({
+          sampleSearchRequest: {
+            page: paginationModel.page,
+            pageSize: paginationModel.pageSize,
+            sortModel: sortModel.map((sort) => ({
+              field: sort.field,
+              sort: sort.sort || "asc",
+            })),
+            filterModel: {
+              items: filterModel.items.map((item) => ({
+                field: item.field,
+                operator: item.operator,
+                value: item.value,
+              })),
+              logicOperator: filterModel.logicOperator || "and",
+            },
+          },
+        });
       } catch (err) {
         console.error("Failed to delete sample:", err);
       }
     }
   };
 
-  // Date formatting
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return "N/A";
-    return new Date(dateString).toLocaleString();
+  // Refresh handler
+  const handleRefresh = () => {
+    searchSamples({
+      sampleSearchRequest: {
+        page: paginationModel.page,
+        pageSize: paginationModel.pageSize,
+        sortModel: sortModel.map((sort) => ({
+          field: sort.field,
+          sort: sort.sort || "asc",
+        })),
+        filterModel: {
+          items: filterModel.items.map((item) => ({
+            field: item.field,
+            operator: item.operator,
+            value: item.value,
+          })),
+          logicOperator: filterModel.logicOperator || "and",
+        },
+      },
+    });
   };
 
   const createErrorParts = getErrorParts(createError);
   const deleteErrorParts = getErrorParts(deleteError);
   const viewErrorParts = getErrorParts(viewError);
+
+  const { columns } = useSampleGrid({
+    onView: handleOpenViewDialog,
+    onDelete: handleOpenDeleteDialog,
+  });
+
+  const NoSamplesOverlay = () => (
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100%",
+      }}
+    >
+      <Typography variant="body1" color="text.secondary">
+        No samples found. Click "Create Sample" to add one.
+      </Typography>
+    </Box>
+  );
 
   return (
     <BasicPage
@@ -232,19 +342,13 @@ const SamplePage = () => {
         <Button
           variant="outlined"
           startIcon={<RefreshIcon />}
-          onClick={() => refetch()}
+          onClick={handleRefresh}
         >
           Refresh
         </Button>
       </Box>
 
-      {/* Loading and error states */}
-      {isLoading && (
-        <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
-          <CircularProgress />
-        </Box>
-      )}
-
+      {/* Error state */}
       {error &&
         (() => {
           const pageErrorParts = getErrorParts(error);
@@ -259,69 +363,39 @@ const SamplePage = () => {
           );
         })()}
 
-      {/* Samples table */}
-      {!isLoading && samples && (
-        <Card>
-          <CardContent>
-            <Typography variant="h6" gutterBottom>
-              Samples ({samples.length})
-            </Typography>
-            {samples.length === 0 ? (
-              <Alert severity="info">
-                No samples found. Create your first sample to get started!
-              </Alert>
-            ) : (
-              <TableContainer component={Paper} variant="outlined">
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>ID</TableCell>
-                      <TableCell>Name</TableCell>
-                      <TableCell>Description</TableCell>
-                      <TableCell>Status</TableCell>
-                      <TableCell>Created At</TableCell>
-                      <TableCell align="right">Actions</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {samples.map((sample: Sample) => (
-                      <TableRow key={sample.id}>
-                        <TableCell>{sample.id}</TableCell>
-                        <TableCell>{sample.name}</TableCell>
-                        <TableCell>{sample.description}</TableCell>
-                        <TableCell>
-                          <Chip
-                            label={sample.active ? "Active" : "Inactive"}
-                            color={sample.active ? "success" : "default"}
-                            size="small"
-                          />
-                        </TableCell>
-                        <TableCell>{formatDate(sample.createdAt)}</TableCell>
-                        <TableCell align="right">
-                          <IconButton
-                            color="primary"
-                            onClick={() => handleOpenViewDialog(sample.id!)}
-                            title="View details"
-                          >
-                            <VisibilityIcon />
-                          </IconButton>
-                          <IconButton
-                            color="error"
-                            onClick={() => handleOpenDeleteDialog(sample.id!)}
-                            title="Delete"
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            )}
-          </CardContent>
-        </Card>
-      )}
+      {/* Samples DataGrid */}
+      <Paper sx={{ height: 600, width: "100%" }}>
+        <DataGrid
+          rows={samples}
+          columns={columns}
+          loading={isLoading}
+          rowCount={rowCount}
+          paginationMode="server"
+          sortingMode="server"
+          filterMode="server"
+          paginationModel={paginationModel}
+          onPaginationModelChange={setPaginationModel}
+          sortModel={sortModel}
+          onSortModelChange={setSortModel}
+          filterModel={filterModel}
+          onFilterModelChange={setFilterModel}
+          pageSizeOptions={[5, 10, 25, 50]}
+          disableRowSelectionOnClick
+          getRowId={(row) => row.id ?? `temp-${Math.random()}`}
+          sx={{
+            border: 0,
+            "& .MuiDataGrid-cell:focus": {
+              outline: "none",
+            },
+            "& .MuiDataGrid-cell:focus-within": {
+              outline: "none",
+            },
+          }}
+          slots={{
+            noRowsOverlay: NoSamplesOverlay,
+          }}
+        />
+      </Paper>
 
       {/* Create dialog */}
       <SampleCreateDialog
