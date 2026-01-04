@@ -9,6 +9,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Chip,
   FormControlLabel,
   Stack,
   Switch,
