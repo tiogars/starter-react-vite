@@ -21,6 +21,13 @@ const BINARY_MEDIA_TYPES = [
   'application/json',
 ];
 
+// Attach Content-Disposition filename to blob metadata
+declare global {
+  interface Blob {
+    filename?: string;
+  }
+}
+
 // Content-aware base query that automatically handles binary and text responses
 const rawBaseQuery = fetchBaseQuery({
   baseUrl: apiUrl,
@@ -33,7 +40,24 @@ const rawBaseQuery = fetchBaseQuery({
       && BINARY_MEDIA_TYPES.some(type => contentType.includes(type));
     
     if (isBinaryExport) {
-      return await response.blob();
+      const blob = await response.blob();
+      
+      // Extract filename from Content-Disposition header
+      const contentDisposition = response.headers.get('content-disposition');
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename[^;=\n]*=(?:(['"]).*?\1|[^;\n]*)/);
+        if (filenameMatch) {
+          // Remove 'filename=' and quotes from the match
+          const filename = filenameMatch[0]
+            .replace(/filename[^=]*=/, '')
+            .replace(/['"]/g, '')
+            .trim();
+          // Attach filename to blob as custom property
+          (blob as Blob & { filename?: string }).filename = filename;
+        }
+      }
+      
+      return blob;
     }
     
     // Handle text responses

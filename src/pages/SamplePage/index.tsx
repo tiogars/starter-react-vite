@@ -345,8 +345,13 @@ const SamplePage = () => {
       const url = window.URL.createObjectURL(result);
       const link = document.createElement("a");
       link.href = url;
-      const fileExtension = options.zip ? "zip" : options.format;
-      link.download = `samples-export-${new Date().toISOString().split("T")[0]}.${fileExtension}`;
+      
+      // Use server-provided filename from blob metadata (set by baseQuery)
+      // or fallback to client-generated filename with date
+      const filename = (result as Blob & { filename?: string }).filename 
+        || `samples-export-${new Date().toISOString().split("T")[0]}.${options.zip ? "zip" : options.format}`;
+      
+      link.download = filename;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
