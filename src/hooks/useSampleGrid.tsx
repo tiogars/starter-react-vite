@@ -51,22 +51,46 @@ export const useSampleGrid = ({
       headerName: "Tags",
       flex: 1,
       minWidth: 200,
+      valueGetter: (params) => {
+        if (!params?.row) {
+          return [];
+        }
+
+        if (Array.isArray(params.row.tags)) {
+          return params.row.tags;
+        }
+
+        const tagNames = (params.row as unknown as { tagNames?: string[] }).tagNames;
+        if (Array.isArray(tagNames)) {
+          return tagNames.map((name, index) => ({ id: `tag-${index}-${name}`, name }));
+        }
+
+        return [];
+      },
       renderCell: (params) => (
         <Stack direction="row" spacing={0.5} flexWrap="wrap" useFlexGap>
-          {params.value && params.value.length > 0 ? (
-            params.value.map((tag: { id?: number; name: string }) => (
+          {(Array.isArray(params.row?.tags)
+            ? params.row.tags
+            : Array.isArray((params.row as unknown as { tagNames?: string[] })?.tagNames)
+              ? (params.row as unknown as { tagNames?: string[] }).tagNames!.map((name, index) => ({
+                  id: `tag-${index}-${name}`,
+                  name,
+                }))
+              : [])
+            .map((tag: { id?: number | string; name: string }) => (
               <Chip
                 key={tag.id || tag.name}
                 label={tag.name}
                 size="small"
                 variant="outlined"
               />
-            ))
-          ) : (
-            <Typography variant="caption" color="textSecondary">
-              No tags
-            </Typography>
-          )}
+            ))}
+          {(!params.row?.tags || params.row.tags.length === 0) &&
+            (!((params.row as unknown as { tagNames?: string[] }).tagNames || []).length) && (
+              <Typography variant="caption" color="textSecondary">
+                No tags
+              </Typography>
+            )}
         </Stack>
       ),
     },
