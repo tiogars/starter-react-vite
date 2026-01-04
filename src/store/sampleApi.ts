@@ -83,7 +83,6 @@ const injectedRtkApi = api
           url: `/sample/export`,
           method: "POST",
           body: queryArg.sampleExportForm,
-          responseHandler: (response) => response.blob(),
         }),
         invalidatesTags: ["sample"],
       }),
@@ -128,7 +127,7 @@ export type ImportSamplesApiArg = {
   sampleImportForm: SampleImportForm;
 };
 export type ExportSamplesApiResponse =
-  /** status 200 Export completed successfully */ Blob;
+  /** status 200 Export completed successfully. Returns binary file content with appropriate Content-Type and Content-Disposition headers. */ Blob;
 export type ExportSamplesApiArg = {
   sampleExportForm: SampleExportForm;
 };
