@@ -5,6 +5,8 @@ import {
   Alert,
   Box,
   Button,
+  Chip,
+  Stack,
   Paper,
   Typography,
 } from "@mui/material";
@@ -226,6 +228,14 @@ const SamplePage = () => {
 
   const samples = searchResponse?.rows || [];
 
+  const activeFilters = filterModel.items.filter((item) =>
+    (item.value ?? "").toString().trim().length > 0
+  ).length;
+  const primarySort = sortModel[0];
+  const sortLabel = primarySort
+    ? `${primarySort.field} (${primarySort.sort || "asc"})`
+    : "Default order";
+
   // Dialog handlers
   const handleOpenCreateDialog = () => {
     // Clear any previous error state from the create mutation
@@ -376,18 +386,22 @@ const SamplePage = () => {
   });
 
   const NoSamplesOverlay = () => (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100%",
-      }}
+    <Stack
+      spacing={1.5}
+      alignItems="center"
+      justifyContent="center"
+      sx={{ height: "100%", textAlign: "center", px: 3 }}
     >
-      <Typography variant="body1" color="text.secondary">
-        No samples found. Click "Create Sample" to add one.
+      <Typography variant="h6" fontWeight={700}>
+        No samples available yet
       </Typography>
-    </Box>
+      <Typography variant="body2" color="text.secondary">
+        Start by creating a sample to populate this view and unlock the grid controls.
+      </Typography>
+      <Button variant="contained" startIcon={<AddIcon />} onClick={handleOpenCreateDialog}>
+        Create Sample
+      </Button>
+    </Stack>
   );
 
   return (
@@ -395,35 +409,112 @@ const SamplePage = () => {
       header="Sample Management"
       content="Manage all your samples with full CRUD operations"
     >
-      {/* Primary actions */}
-      <Box
-        sx={{ mb: 3, display: "flex", gap: 2, justifyContent: "space-between" }}
+      <Paper
+        sx={{
+          p: { xs: 2.5, md: 3 },
+          borderRadius: 3,
+          border: "1px solid",
+          borderColor: "divider",
+          background: (theme) =>
+            theme.palette.mode === "light"
+              ? "linear-gradient(135deg, #ffffff 0%, #f7f9fc 45%, #eef2f8 100%)"
+              : theme.palette.background.paper,
+          boxShadow: (theme) => theme.shadows[3],
+        }}
       >
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={handleOpenCreateDialog}
-        >
-          Create Sample
-        </Button>
-        <Box sx={{ display: "flex", gap: 2 }}>
-          <Button
-            variant="outlined"
-            startIcon={<DownloadIcon />}
-            onClick={handleOpenExportDialog}
-            disabled={samples.length === 0}
+        <Stack spacing={2.5}>
+          <Stack
+            direction={{ xs: "column", md: "row" }}
+            alignItems={{ xs: "flex-start", md: "center" }}
+            justifyContent="space-between"
+            spacing={1.5}
           >
-            Export
-          </Button>
-          <Button
-            variant="outlined"
-            startIcon={<RefreshIcon />}
-            onClick={handleRefresh}
-          >
-            Refresh
-          </Button>
-        </Box>
-      </Box>
+            <Box>
+              <Typography variant="h5" fontWeight={800}>
+                Your sample workspace
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 520 }}>
+                Create, filter, and export sample records with a refreshed layout that keeps critical actions in reach.
+              </Typography>
+            </Box>
+
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} width={{ xs: "100%", md: "auto" }}>
+              <Button
+                variant="contained"
+                startIcon={<AddIcon />}
+                onClick={handleOpenCreateDialog}
+                fullWidth
+                sx={{ width: { xs: "100%", sm: "auto" } }}
+              >
+                Create Sample
+              </Button>
+              <Button
+                variant="outlined"
+                startIcon={<DownloadIcon />}
+                onClick={handleOpenExportDialog}
+                disabled={samples.length === 0}
+                fullWidth
+                sx={{ width: { xs: "100%", sm: "auto" } }}
+              >
+                Export
+              </Button>
+              <Button
+                variant="outlined"
+                startIcon={<RefreshIcon />}
+                onClick={handleRefresh}
+                fullWidth
+                sx={{ width: { xs: "100%", sm: "auto" } }}
+              >
+                Refresh
+              </Button>
+            </Stack>
+          </Stack>
+
+          <Stack direction={{ xs: "column", md: "row" }} spacing={1.5} flexWrap="wrap">
+            {[{
+              label: "Total records",
+              value: rowCount ?? "—",
+              helper: "Server-reported row count",
+            },
+            {
+              label: "Active filters",
+              value: activeFilters,
+              helper: activeFilters ? "Filters currently shaping results" : "No filters applied",
+            },
+            {
+              label: "Sorting",
+              value: sortLabel,
+              helper: "Primary sort applied to the grid",
+            }].map((item) => (
+              <Box
+                key={item.label}
+                sx={{
+                  flex: 1,
+                  minWidth: 200,
+                  p: 2,
+                  borderRadius: 2,
+                  border: "1px solid",
+                  borderColor: "divider",
+                  backgroundColor: (theme) =>
+                    theme.palette.mode === "light"
+                      ? "rgba(255,255,255,0.9)"
+                      : theme.palette.background.default,
+                }}
+              >
+                <Typography variant="overline" sx={{ letterSpacing: 1, color: "text.secondary" }}>
+                  {item.label}
+                </Typography>
+                <Typography variant="h6" fontWeight={800}>
+                  {item.value}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {item.helper}
+                </Typography>
+              </Box>
+            ))}
+          </Stack>
+        </Stack>
+      </Paper>
 
       {/* Error state */}
       {error &&
@@ -455,7 +546,33 @@ const SamplePage = () => {
         })()}
 
       {/* Samples DataGrid */}
-      <Paper sx={{ height: 600, width: "100%" }}>
+      <Paper
+        sx={{
+          p: { xs: 1, md: 1.5 },
+          borderRadius: 3,
+          border: "1px solid",
+          borderColor: "divider",
+          background: (theme) =>
+            theme.palette.mode === "light"
+              ? "linear-gradient(180deg, #ffffff 0%, #f5f7fb 100%)"
+              : theme.palette.background.paper,
+          boxShadow: (theme) => theme.shadows[2],
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            mb: 1,
+            gap: 1,
+          }}
+        >
+          <Typography variant="subtitle1" fontWeight={700}>
+            Live sample table
+          </Typography>
+          <Chip label="Server-driven" color="primary" variant="outlined" size="small" />
+        </Box>
         <DataGrid
           rows={samples}
           columns={columns}
@@ -475,6 +592,21 @@ const SamplePage = () => {
           getRowId={(row) => row.id ?? `temp-${Math.random()}`}
           sx={{
             border: 0,
+            height: 560,
+            backgroundColor: "transparent",
+            "& .MuiDataGrid-columnHeaders": {
+              backgroundColor: (theme) =>
+                theme.palette.mode === "light"
+                  ? "#eef2f8"
+                  : theme.palette.background.default,
+              borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
+            },
+            "& .MuiDataGrid-row:hover": {
+              backgroundColor: (theme) =>
+                theme.palette.mode === "light"
+                  ? "rgba(0,0,0,0.02)"
+                  : "rgba(255,255,255,0.04)",
+            },
             "& .MuiDataGrid-cell:focus": {
               outline: "none",
             },
