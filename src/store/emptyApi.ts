@@ -45,12 +45,13 @@ const rawBaseQuery = fetchBaseQuery({
       // Extract filename from Content-Disposition header
       const contentDisposition = response.headers.get('content-disposition');
       if (contentDisposition) {
-        const filenameMatch = contentDisposition.match(/filename[^;=\n]*=(?:(['"]).*?\1|[^;\n]*)/);
+        const filenameMatch = /filename[^;=\n]*=(?:(['"]).*?\1|[^;\n]*)/.exec(contentDisposition);
         if (filenameMatch) {
-          // Remove 'filename=' and quotes from the match
-          const filename = filenameMatch[0]
-            .replace(/filename[^=]*=/, '')
-            .replace(/['"]/g, '')
+          const rawFilename = filenameMatch[0];
+          const filename = rawFilename
+            .slice(rawFilename.indexOf('=') + 1)
+            .replaceAll('"', '')
+            .replaceAll("'", '')
             .trim();
           // Attach filename to blob as custom property
           (blob as Blob & { filename?: string }).filename = filename;
