@@ -1,7 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useForm, Controller } from "react-hook-form";
 import {
   Alert,
+  Autocomplete,
   Button,
   CircularProgress,
   Dialog,
@@ -15,6 +16,8 @@ import {
 } from "@mui/material";
 import type { SampleCreateDialogProps } from "./SampleCreateDialog.types";
 import type { SampleCreateForm } from "../../store/sampleApi";
+import type { SampleTag } from "../../store/sampleTagApi";
+import { useGetAllTagsQuery } from "../../store/sampleTagApi";
 
 export const SampleCreateDialog = (props: SampleCreateDialogProps) => {
   const {
@@ -26,6 +29,9 @@ export const SampleCreateDialog = (props: SampleCreateDialogProps) => {
     violations,
   } = props;
 
+  // Fetch all available tags
+  const { data: tagsData = [] } = useGetAllTagsQuery();
+
   const {
     control,
     handleSubmit,
@@ -36,6 +42,7 @@ export const SampleCreateDialog = (props: SampleCreateDialogProps) => {
       name: "",
       description: "",
       active: true,
+      tagNames: [],
     },
   });
 
@@ -45,6 +52,7 @@ export const SampleCreateDialog = (props: SampleCreateDialogProps) => {
         name: "",
         description: "",
         active: true,
+        tagNames: [],
       });
     }
   }, [open, reset]);
@@ -57,6 +65,11 @@ export const SampleCreateDialog = (props: SampleCreateDialogProps) => {
     reset();
     onCancel();
   };
+
+  // Convert tag objects to names for autocomplete
+  const tagOptions = useMemo(() => {
+    return (tagsData || []).map((tag: SampleTag) => tag.name || "");
+  }, [tagsData]);
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
@@ -100,6 +113,38 @@ export const SampleCreateDialog = (props: SampleCreateDialogProps) => {
                   error={!!violations?.description}
                   helperText={violations?.description}
                   disabled={submitting}
+                />
+              )}
+            />
+            <Controller
+              name="tagNames"
+              control={control}
+              render={({ field }) => (
+                <Autocomplete
+                  multiple
+                  options={tagOptions}
+                  value={field.value || []}
+                  onChange={(_, newValue) => {
+                    field.onChange(newValue || []);
+                  }}
+                  freeSolo
+                  renderTags={(value, getTagProps) =>
+                    value.map((option, index) => (
+                      <Chip
+                        label={option}
+                        size="small"
+                        {...getTagProps({ index })}
+                      />
+                    ))
+                  }
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Tags"
+                      placeholder="Select or create tags"
+                      disabled={submitting}
+                    />
+                  )}
                 />
               )}
             />

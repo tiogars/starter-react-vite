@@ -8,7 +8,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { GridActionsCellItem } from "@mui/x-data-grid";
-import { Chip } from "@mui/material";
+import { Chip, Stack, Typography } from "@mui/material";
 
 export const useSampleGrid = ({
   onView,
@@ -47,6 +47,30 @@ export const useSampleGrid = ({
       ),
     },
     {
+      field: "tags",
+      headerName: "Tags",
+      flex: 1,
+      minWidth: 200,
+      renderCell: (params) => (
+        <Stack direction="row" spacing={0.5} flexWrap="wrap" useFlexGap>
+          {params.value && params.value.length > 0 ? (
+            params.value.map((tag: { id?: number; name: string }) => (
+              <Chip
+                key={tag.id || tag.name}
+                label={tag.name}
+                size="small"
+                variant="outlined"
+              />
+            ))
+          ) : (
+            <Typography variant="caption" color="textSecondary">
+              No tags
+            </Typography>
+          )}
+        </Stack>
+      ),
+    },
+    {
       field: "createdAt",
       headerName: "Created At",
       width: 180,
@@ -60,18 +84,21 @@ export const useSampleGrid = ({
       width: 100,
       getActions: (params) => [
         <GridActionsCellItem
+          key="view"
           icon={<VisibilityIcon />}
           label="View"
           onClick={() => onView(params.row)}
           showInMenu={false}
         />,
         <GridActionsCellItem
+          key="edit"
           icon={<EditIcon />}
           label="Edit"
           onClick={() => onEdit(params.row)}
           showInMenu={false}
         />,
         <GridActionsCellItem
+          key="delete"
           icon={<DeleteIcon />}
           label="Delete"
           onClick={() => onDelete(params.row)}

@@ -17,6 +17,9 @@ const config: ConfigFile = {
     "./src/store/sampleApi.ts": {
       filterEndpoints: [/sample/i],
     },
+    "./src/store/sampleTagApi.ts": {
+      filterEndpoints: [/tag/i],
+    },
   },
   hooks: true,
   tag: true,

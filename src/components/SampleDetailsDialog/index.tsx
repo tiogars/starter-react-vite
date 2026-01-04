@@ -57,6 +57,27 @@ export const SampleDetailsDialog = (props: SampleDetailsDialogProps) => {
             </Box>
             <Box>
               <Typography variant="subtitle2" color="text.secondary">
+                Tags
+              </Typography>
+              <Stack direction="row" spacing={0.5} flexWrap="wrap" useFlexGap sx={{ mt: 0.5 }}>
+                {sample.tags && sample.tags.length > 0 ? (
+                  sample.tags.map((tag) => (
+                    <Chip
+                      key={tag.id || tag.name}
+                      label={tag.name}
+                      size="small"
+                      variant="outlined"
+                    />
+                  ))
+                ) : (
+                  <Typography variant="caption" color="text.secondary">
+                    No tags
+                  </Typography>
+                )}
+              </Stack>
+            </Box>
+            <Box>
+              <Typography variant="subtitle2" color="text.secondary">
                 Created At
               </Typography>
               <Typography variant="body1">{formatDate(sample.createdAt)}</Typography>

@@ -131,6 +131,11 @@ export type ExportSamplesApiResponse =
 export type ExportSamplesApiArg = {
   sampleExportForm: SampleExportForm;
 };
+export type SampleTag = {
+  id?: number;
+  name: string;
+  description?: string;
+};
 export type Sample = {
   id?: number;
   name: string;
@@ -140,6 +145,7 @@ export type Sample = {
   createdBy?: string;
   updatedAt?: string;
   updatedBy?: string;
+  tags?: SampleTag[];
 };
 export type ErrorResponse = {
   /** HTTP status code */
@@ -158,11 +164,13 @@ export type SampleUpdateForm = {
   name?: string;
   description?: string;
   active?: boolean;
+  tagNames?: string[];
 };
 export type SampleCreateForm = {
   name?: string;
   description?: string;
   active?: boolean;
+  tagNames?: string[];
 };
 export type SampleSearchResponse = {
   rows?: Sample[];
