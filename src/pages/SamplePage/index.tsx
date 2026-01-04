@@ -24,6 +24,8 @@ import SampleCreateDialog from "../../components/SampleCreateDialog";
 import SampleUpdateDialog from "../../components/SampleUpdateDialog";
 import SampleDetailsDialog from "../../components/SampleDetailsDialog";
 import DeleteConfirmDialog from "../../components/DeleteConfirmDialog";
+import ExportDialog from "../../components/ExportDialog";
+import type { ExportOptions } from "../../components/ExportDialog/ExportDialog.types";
 import { API_TIMEOUT_MS } from "../../store/emptyApi";
 import {
   useCreateSampleMutation,
@@ -115,6 +117,7 @@ const SamplePage = () => {
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [exportDialogOpen, setExportDialogOpen] = useState(false);
   const [selectedSampleId, setSelectedSampleId] = useState<number | null>(null);
   const [selectedSampleForUpdate, setSelectedSampleForUpdate] = useState<Sample | undefined>(undefined);
 
@@ -183,6 +186,31 @@ const SamplePage = () => {
       logicOperator: filterModel.logicOperator || "and",
     },
   });
+
+  // Helper to build search request for exporting all records
+  const buildSearchRequestForExport = (scope: string): SampleSearchRequest => {
+    if (scope === "all") {
+      // Return a request for all records using the actual total count
+      return {
+        page: 0,
+        pageSize: rowCount || 10000, // Use actual row count, fallback to 10000
+        sortModel: sortModel.map((sort) => ({
+          field: sort.field,
+          sort: sort.sort || "asc",
+        })),
+        filterModel: {
+          items: filterModel.items.map((item) => ({
+            field: item.field,
+            operator: item.operator,
+            value: item.value,
+          })),
+          logicOperator: filterModel.logicOperator || "and",
+        },
+      };
+    }
+    // For current page or selection, use the normal search request
+    return buildSearchRequest();
+  };
 
   // Load samples when pagination, sort, or filter changes
   useEffect(() => {
@@ -293,16 +321,23 @@ const SamplePage = () => {
     searchSamples({ sampleSearchRequest: buildSearchRequest() });
   };
 
+  // Export dialog handlers
+  const handleOpenExportDialog = () => {
+    setExportDialogOpen(true);
+  };
+
+  const handleCloseExportDialog = () => {
+    setExportDialogOpen(false);
+  };
+
   // Export handler
-  const handleExport = async () => {
+  const handleExport = async (options: ExportOptions) => {
     try {
-      const format = "json";
-      const useZip = true;
       const result = await exportSamples({
         sampleExportForm: {
-          format,
-          zip: useZip,
-          searchRequest: buildSearchRequest(),
+          format: options.format,
+          zip: options.zip,
+          searchRequest: buildSearchRequestForExport(options.scope),
         },
       }).unwrap();
 
@@ -310,12 +345,13 @@ const SamplePage = () => {
       const url = window.URL.createObjectURL(result);
       const link = document.createElement("a");
       link.href = url;
-      const fileExtension = useZip ? "zip" : format;
+      const fileExtension = options.zip ? "zip" : options.format;
       link.download = `samples-export-${new Date().toISOString().split("T")[0]}.${fileExtension}`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
+      handleCloseExportDialog();
     } catch (err) {
       // Error is automatically captured in exportError state by RTK Query
       console.error("Failed to export samples:", err);
@@ -369,10 +405,10 @@ const SamplePage = () => {
           <Button
             variant="outlined"
             startIcon={<DownloadIcon />}
-            onClick={handleExport}
-            disabled={isExporting || samples.length === 0}
+            onClick={handleOpenExportDialog}
+            disabled={samples.length === 0}
           >
-            {isExporting ? "Exporting..." : "Export"}
+            Export
           </Button>
           <Button
             variant="outlined"
@@ -506,6 +542,19 @@ const SamplePage = () => {
         message={
           "Are you sure you want to delete this sample? This action cannot be undone."
         }
+      />
+
+      {/* Export dialog */}
+      <ExportDialog
+        open={exportDialogOpen}
+        loading={isExporting}
+        errorMessage={
+          exportError
+            ? formatErrorMessage(exportErrorParts, "Export failed.")
+            : undefined
+        }
+        onCancel={handleCloseExportDialog}
+        onSubmit={handleExport}
       />
     </BasicPage>
   );
