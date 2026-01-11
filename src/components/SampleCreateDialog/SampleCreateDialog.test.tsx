@@ -5,6 +5,7 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderWithProviders, screen, userEvent, waitFor } from '../../test-utils';
+import { within } from '@testing-library/react';
 import { SampleCreateDialog } from './index';
 import * as sampleTagApi from '../../store/sampleTagApi';
 
@@ -46,9 +47,9 @@ describe('SampleCreateDialog', () => {
     });
 
     it('should not render dialog when open is false', () => {
-      renderWithProviders(<SampleCreateDialog {...defaultProps} open={false} />);
-      
-      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+      const { container } = renderWithProviders(<SampleCreateDialog {...defaultProps} open={false} />);
+      // Scope to container to avoid any stray portals
+      expect(within(container).queryByRole('dialog')).toBeNull();
     });
 
     it('should call onCancel when close button is clicked', async () => {
@@ -65,16 +66,17 @@ describe('SampleCreateDialog', () => {
   describe('Form Rendering', () => {
     it('should render all form fields', () => {
       renderWithProviders(<SampleCreateDialog {...defaultProps} />);
-      
-      expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/description/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/active/i)).toBeInTheDocument();
+      const dialog = screen.getByRole('dialog');
+      expect(within(dialog).getByLabelText(/name/i)).toBeInTheDocument();
+      expect(within(dialog).getByLabelText(/description/i)).toBeInTheDocument();
+      // MUI Switch is role "switch"
+      expect(within(dialog).getByRole('switch', { name: /active/i })).toBeInTheDocument();
     });
 
     it('should initialize active switch as checked', () => {
       renderWithProviders(<SampleCreateDialog {...defaultProps} />);
-      
-      const activeSwitch = screen.getByRole('checkbox', { name: /active/i });
+      const dialog = screen.getByRole('dialog');
+      const activeSwitch = within(dialog).getByRole('switch', { name: /active/i });
       expect(activeSwitch).toBeChecked();
     });
 
@@ -89,8 +91,8 @@ describe('SampleCreateDialog', () => {
     it('should allow typing in name field', async () => {
       const user = userEvent.setup();
       renderWithProviders(<SampleCreateDialog {...defaultProps} />);
-      
-      const nameInput = screen.getByLabelText(/name/i);
+      const dialog = screen.getByRole('dialog');
+      const nameInput = within(dialog).getByLabelText(/name/i);
       await user.type(nameInput, 'Test Sample');
       
       expect(nameInput).toHaveValue('Test Sample');
@@ -99,8 +101,8 @@ describe('SampleCreateDialog', () => {
     it('should allow typing in description field', async () => {
       const user = userEvent.setup();
       renderWithProviders(<SampleCreateDialog {...defaultProps} />);
-      
-      const descInput = screen.getByLabelText(/description/i);
+      const dialog = screen.getByRole('dialog');
+      const descInput = within(dialog).getByLabelText(/description/i);
       await user.type(descInput, 'Test Description');
       
       expect(descInput).toHaveValue('Test Description');
@@ -109,8 +111,8 @@ describe('SampleCreateDialog', () => {
     it('should toggle active switch', async () => {
       const user = userEvent.setup();
       renderWithProviders(<SampleCreateDialog {...defaultProps} />);
-      
-      const activeSwitch = screen.getByRole('checkbox', { name: /active/i });
+      const dialog = screen.getByRole('dialog');
+      const activeSwitch = within(dialog).getByRole('switch', { name: /active/i });
       expect(activeSwitch).toBeChecked();
       
       await user.click(activeSwitch);
@@ -122,13 +124,13 @@ describe('SampleCreateDialog', () => {
     it('should call onSubmit with form data when submitted', async () => {
       const user = userEvent.setup();
       renderWithProviders(<SampleCreateDialog {...defaultProps} />);
-      
+      const dialog = screen.getByRole('dialog');
       // Fill out the form
-      await user.type(screen.getByLabelText(/name/i), 'New Sample');
-      await user.type(screen.getByLabelText(/description/i), 'Sample description');
+      await user.type(within(dialog).getByLabelText(/name/i), 'New Sample');
+      await user.type(within(dialog).getByLabelText(/description/i), 'Sample description');
       
       // Submit the form
-      const submitButton = screen.getByRole('button', { name: /create/i });
+      const submitButton = within(dialog).getByRole('button', { name: /create/i });
       await user.click(submitButton);
       
       await waitFor(() => {
@@ -144,8 +146,9 @@ describe('SampleCreateDialog', () => {
 
     it('should disable submit button when submitting', () => {
       renderWithProviders(<SampleCreateDialog {...defaultProps} submitting={true} />);
-      
-      const submitButton = screen.getByRole('button', { name: /create/i });
+      // Dialog renders in a portal, so select globally by submit type
+      const submitButton = document.querySelector('button[type="submit"]') as HTMLButtonElement | null;
+      expect(submitButton).not.toBeNull();
       expect(submitButton).toBeDisabled();
     });
 
@@ -167,16 +170,16 @@ describe('SampleCreateDialog', () => {
     });
 
     it('should display validation violations', () => {
-      const violations = [
-        { field: 'name', message: 'Name is required' },
-        { field: 'description', message: 'Description too short' },
-      ];
+      const violations = {
+        name: 'Name is required',
+        description: 'Description too short',
+      } as any;
       renderWithProviders(
         <SampleCreateDialog {...defaultProps} violations={violations} />
       );
-      
-      expect(screen.getByText(/Name is required/i)).toBeInTheDocument();
-      expect(screen.getByText(/Description too short/i)).toBeInTheDocument();
+      const dialog = screen.getByRole('dialog');
+      expect(within(dialog).getByText(/Name is required/i)).toBeInTheDocument();
+      expect(within(dialog).getByText(/Description too short/i)).toBeInTheDocument();
     });
   });
 
@@ -195,9 +198,9 @@ describe('SampleCreateDialog', () => {
       } as any);
       
       renderWithProviders(<SampleCreateDialog {...defaultProps} />);
-      
+      const dialog = screen.getByRole('dialog');
       // Autocomplete should be present (tags field)
-      expect(screen.getByLabelText(/tags/i)).toBeInTheDocument();
+      expect(within(dialog).getByLabelText(/tags/i)).toBeInTheDocument();
     });
 
     it('should handle tags loading state', () => {
@@ -209,9 +212,9 @@ describe('SampleCreateDialog', () => {
       } as any);
       
       renderWithProviders(<SampleCreateDialog {...defaultProps} />);
-      
+      const dialog = screen.getByRole('dialog');
       // Should still render the form
-      expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
+      expect(within(dialog).getByLabelText(/name/i)).toBeInTheDocument();
     });
   });
 });

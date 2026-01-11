@@ -11,8 +11,10 @@ describe('SampleComponent', () => {
   describe('Rendering', () => {
     it('should render with argument prop', () => {
       render(<SampleComponent argument="test-argument" />);
-      
-      expect(screen.getByText(/Argument : test-argument/i)).toBeInTheDocument();
+      const argumentLine = screen.getByText((content) =>
+        content.includes('Argument :') && content.includes('test-argument')
+      );
+      expect(argumentLine).toBeInTheDocument();
     });
 
     it('should render children content', () => {
@@ -27,8 +29,8 @@ describe('SampleComponent', () => {
 
     it('should render with empty argument', () => {
       render(<SampleComponent argument="" />);
-      
-      expect(screen.getByText(/Argument :/i)).toBeInTheDocument();
+      const argumentLine = screen.getByText((content) => content.trim().startsWith('Argument :'));
+      expect(argumentLine).toBeInTheDocument();
     });
   });
 
@@ -36,14 +38,18 @@ describe('SampleComponent', () => {
     it('should handle special characters in argument', () => {
       const specialChars = '<script>alert("test")</script>';
       render(<SampleComponent argument={specialChars} />);
-      
-      expect(screen.getByText(new RegExp(specialChars))).toBeInTheDocument();
+      const argumentLine = screen.getByText((content) =>
+        content.includes('Argument :') && content.includes(specialChars)
+      );
+      expect(argumentLine).toBeInTheDocument();
     });
 
     it('should handle numeric argument values', () => {
       render(<SampleComponent argument={123 as unknown as string} />);
-      
-      expect(screen.getByText(/Argument : 123/i)).toBeInTheDocument();
+      const argumentLine = screen.getByText((content) =>
+        content.includes('Argument :') && content.includes('123')
+      );
+      expect(argumentLine).toBeInTheDocument();
     });
   });
 });
