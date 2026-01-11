@@ -77,7 +77,25 @@ export default defineConfig(({ mode }) => {
         },
       },
       coverage: {
-        reporter: ['text', 'html'],
+        provider: 'v8', // Use v8 for better performance and accuracy
+        reporter: ['text', 'html', 'lcov'],
+        reportsDirectory: './coverage',
+        exclude: [
+          'node_modules/',
+          'src/setupTests.ts',
+          '**/*.d.ts',
+          '**/*.config.*',
+          '**/mockData',
+          'src/store/*Api.ts', // Exclude auto-generated API files
+          '**/*.types.ts', // Exclude type-only files
+        ],
+        // Enforce 80% coverage thresholds
+        thresholds: {
+          lines: 80,
+          functions: 80,
+          branches: 80,
+          statements: 80,
+        },
       },
     },
   }
