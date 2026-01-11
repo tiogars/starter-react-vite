@@ -6,6 +6,11 @@ import RoutePage from '../pages/Settings/RoutePage';
 import ErrorPage from '../pages/ErrorPage';
 import ArchitecturePage from '../pages/ArchitecturePage';
 import SamplePage from '../pages/SamplePage';
+import SettingsPage from '../pages/SettingsPage';
+import ThemeSettingsPage from '../pages/Settings/ThemeSettingsPage';
+import ThemeLightOnlyPage from '../pages/ThemeLightOnlyPage';
+import ThemeDarkOnlyPage from '../pages/ThemeDarkOnlyPage';
+import ThemeSwitchablePage from '../pages/ThemeSwitchablePage';
 
 export const router = createBrowserRouter([
   {
@@ -32,6 +37,26 @@ export const router = createBrowserRouter([
       {
         path: 'samples',
         element: <SamplePage />,
+      },
+      {
+        path: 'settings',
+        element: <SettingsPage />,
+      },
+      {
+        path: 'settings/theme',
+        element: <ThemeSettingsPage />,
+      },
+      {
+        path: 'theme-light',
+        element: <ThemeLightOnlyPage />,
+      },
+      {
+        path: 'theme-dark',
+        element: <ThemeDarkOnlyPage />,
+      },
+      {
+        path: 'theme-switchable',
+        element: <ThemeSwitchablePage />,
       },
     ],
   },
