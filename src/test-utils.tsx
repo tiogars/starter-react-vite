@@ -9,6 +9,7 @@ import type { ReactElement } from 'react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { emptySplitApi } from './store/emptyApi';
+import themeReducer from './store/themeSlice';
 
 /**
  * Creates a mock Redux store for testing
@@ -18,6 +19,7 @@ export function setupStore(preloadedState?: unknown) {
   return configureStore({
     reducer: {
       [emptySplitApi.reducerPath]: emptySplitApi.reducer,
+      theme: themeReducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware().concat(emptySplitApi.middleware),
