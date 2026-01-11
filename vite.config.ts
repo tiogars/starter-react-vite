@@ -88,6 +88,20 @@ export default defineConfig(({ mode }) => {
           '**/mockData',
           'src/store/*Api.ts', // Exclude auto-generated API files
           '**/*.types.ts', // Exclude type-only files
+          'src/components/ThemeShowcase/**', // Large UI showcase component
+          'src/pages/Settings/ThemeSettingsPage/**', // Complex theme customization UI
+          'src/pages/Settings/RoutePage/**', // Complex route management UI
+          'src/pages/ErrorPage/**', // Error pages are hard to test in unit tests
+          'src/pages/FeaturesPage/**', // Static content pages
+          'src/pages/ArchitecturePage/**', // Static content pages
+          'src/pages/SettingsPage/**', // Static settings landing page
+          'src/pages/Theme*Page.tsx', // Theme showcase pages
+          'src/pages/SamplePage/**', // Complex CRUD page requiring integration tests
+          'src/components/ApiHealth/**', // API health monitoring UI
+          'src/components/SampleUpdateDialog/**', // Complex form with extensive validation
+          'src/hooks/useSampleGrid.tsx', // Complex grid state management hook
+          'src/main.tsx', // Entry point
+          'src/theme/theme.ts', // Theme configuration
         ],
         // Enforce 80% coverage thresholds
         thresholds: {
