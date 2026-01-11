@@ -13,7 +13,7 @@ describe('ThemeToggle', () => {
     it('should render toggle button in light mode', () => {
       renderWithProviders(<ThemeToggle />, {
         preloadedState: {
-          theme: { mode: 'light', variant: 'default' }
+          theme: { mode: 'light', variant: 'switchable' }
         }
       });
       
@@ -24,7 +24,7 @@ describe('ThemeToggle', () => {
     it('should render toggle button in dark mode', () => {
       renderWithProviders(<ThemeToggle />, {
         preloadedState: {
-          theme: { mode: 'dark', variant: 'default' }
+          theme: { mode: 'dark', variant: 'switchable' }
         }
       });
       
@@ -35,7 +35,7 @@ describe('ThemeToggle', () => {
     it('should show correct tooltip for light mode', () => {
       renderWithProviders(<ThemeToggle />, {
         preloadedState: {
-          theme: { mode: 'light', variant: 'default' }
+          theme: { mode: 'light', variant: 'switchable' }
         }
       });
       
@@ -46,7 +46,7 @@ describe('ThemeToggle', () => {
     it('should show correct tooltip for dark mode', () => {
       renderWithProviders(<ThemeToggle />, {
         preloadedState: {
-          theme: { mode: 'dark', variant: 'default' }
+          theme: { mode: 'dark', variant: 'switchable' }
         }
       });
       
@@ -61,7 +61,7 @@ describe('ThemeToggle', () => {
       
       const { store } = renderWithProviders(<ThemeToggle />, {
         preloadedState: {
-          theme: { mode: 'light', variant: 'default' }
+          theme: { mode: 'light', variant: 'switchable' }
         }
       });
       
@@ -77,7 +77,7 @@ describe('ThemeToggle', () => {
       
       const { store } = renderWithProviders(<ThemeToggle />, {
         preloadedState: {
-          theme: { mode: 'dark', variant: 'default' }
+          theme: { mode: 'dark', variant: 'switchable' }
         }
       });
       
