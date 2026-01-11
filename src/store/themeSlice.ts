@@ -2,13 +2,15 @@ import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
 export type ThemeMode = 'light' | 'dark';
+export type ThemeVariant = 'light-only' | 'dark-only' | 'switchable';
 
 interface ThemeState {
   mode: ThemeMode;
+  variant: ThemeVariant;
 }
 
-// Retrieve the saved theme or fall back to system preference
-const getInitialTheme = (): ThemeMode => {
+// Retrieve the saved theme mode or fall back to system preference
+const getInitialThemeMode = (): ThemeMode => {
   const savedTheme = localStorage.getItem('theme-mode');
   if (savedTheme === 'light' || savedTheme === 'dark') {
     return savedTheme;
@@ -22,8 +24,18 @@ const getInitialTheme = (): ThemeMode => {
   return 'light';
 };
 
+// Retrieve the saved theme variant or default to switchable
+const getInitialThemeVariant = (): ThemeVariant => {
+  const savedVariant = localStorage.getItem('theme-variant');
+  if (savedVariant === 'light-only' || savedVariant === 'dark-only' || savedVariant === 'switchable') {
+    return savedVariant;
+  }
+  return 'switchable';
+};
+
 const initialState: ThemeState = {
-  mode: getInitialTheme(),
+  mode: getInitialThemeMode(),
+  variant: getInitialThemeVariant(),
 };
 
 export const themeSlice = createSlice({
@@ -38,11 +50,24 @@ export const themeSlice = createSlice({
       state.mode = state.mode === 'light' ? 'dark' : 'light';
       localStorage.setItem('theme-mode', state.mode);
     },
+    setThemeVariant: (state, action: PayloadAction<ThemeVariant>) => {
+      state.variant = action.payload;
+      localStorage.setItem('theme-variant', action.payload);
+      // For light-only and dark-only variants, set the appropriate mode
+      if (action.payload === 'light-only') {
+        state.mode = 'light';
+        localStorage.setItem('theme-mode', 'light');
+      } else if (action.payload === 'dark-only') {
+        state.mode = 'dark';
+        localStorage.setItem('theme-mode', 'dark');
+      }
+    },
   },
 });
 
-export const { setThemeMode, toggleThemeMode } = themeSlice.actions;
+export const { setThemeMode, toggleThemeMode, setThemeVariant } = themeSlice.actions;
 
 export const selectThemeMode = (state: any) => state.theme.mode;
+export const selectThemeVariant = (state: any) => state.theme.variant;
 
 export default themeSlice.reducer;

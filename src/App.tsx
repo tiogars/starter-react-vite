@@ -3,12 +3,23 @@ import { RouterProvider } from 'react-router';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { store } from './store/store';
 import { router } from './routes';
-import { getTheme } from './theme/theme';
-import { selectThemeMode } from './store/themeSlice';
+import { getSwitchableTheme, lightOnlyTheme, darkOnlyTheme } from './theme/themeVariants';
+import { selectThemeMode, selectThemeVariant } from './store/themeSlice';
 
 const AppContent = () => {
   const themeMode = useSelector(selectThemeMode);
-  const theme = getTheme(themeMode);
+  const themeVariant = useSelector(selectThemeVariant);
+  
+  let theme;
+  
+  if (themeVariant === 'light-only') {
+    theme = lightOnlyTheme;
+  } else if (themeVariant === 'dark-only') {
+    theme = darkOnlyTheme;
+  } else {
+    // switchable variant
+    theme = getSwitchableTheme(themeMode);
+  }
 
   return (
     <ThemeProvider theme={theme}>
