@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import {
   Alert,
@@ -33,7 +33,6 @@ export const ExportDialog = (props: ExportDialogProps) => {
     errorMessage,
     onCancel,
     onSubmit,
-    disableSelection = false,
     hasSelection = false,
   } = props;
 
@@ -41,7 +40,6 @@ export const ExportDialog = (props: ExportDialogProps) => {
     control,
     handleSubmit,
     reset,
-    formState: { errors },
   } = useForm<ExportFormData>({
     defaultValues: {
       format: "json",

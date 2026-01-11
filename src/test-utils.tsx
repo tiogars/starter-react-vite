@@ -166,5 +166,6 @@ export function mockDialog() {
 }
 
 // Re-export everything from testing library
+// eslint-disable-next-line react-refresh/only-export-components
 export * from '@testing-library/react';
 export { userEvent } from '@testing-library/user-event';
