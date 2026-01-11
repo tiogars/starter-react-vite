@@ -35,7 +35,8 @@ describe('SampleCreateDialog', () => {
       isLoading: false,
       isError: false,
       error: undefined,
-    } as any);
+      refetch: vi.fn(),
+    } as ReturnType<typeof sampleTagApi.useGetAllTagsQuery>);
   });
 
   describe('Dialog Visibility', () => {
@@ -170,10 +171,10 @@ describe('SampleCreateDialog', () => {
     });
 
     it('should display validation violations', () => {
-      const violations = {
+      const violations: Record<string, string> = {
         name: 'Name is required',
         description: 'Description too short',
-      } as any;
+      };
       renderWithProviders(
         <SampleCreateDialog {...defaultProps} violations={violations} />
       );
@@ -195,7 +196,8 @@ describe('SampleCreateDialog', () => {
         isLoading: false,
         isError: false,
         error: undefined,
-      } as any);
+        refetch: vi.fn(),
+      } as ReturnType<typeof sampleTagApi.useGetAllTagsQuery>);
       
       renderWithProviders(<SampleCreateDialog {...defaultProps} />);
       const dialog = screen.getByRole('dialog');
@@ -209,7 +211,8 @@ describe('SampleCreateDialog', () => {
         isLoading: true,
         isError: false,
         error: undefined,
-      } as any);
+        refetch: vi.fn(),
+      } as ReturnType<typeof sampleTagApi.useGetAllTagsQuery>);
       
       renderWithProviders(<SampleCreateDialog {...defaultProps} />);
       const dialog = screen.getByRole('dialog');

@@ -20,7 +20,7 @@ import type {
   FetchBaseQueryError,
 } from "@reduxjs/toolkit/query";
 import type { SerializedError } from "@reduxjs/toolkit";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import BasicPage from "../../components/BasicPage";
 import SampleCreateDialog from "../../components/SampleCreateDialog";
 import SampleUpdateDialog from "../../components/SampleUpdateDialog";
@@ -172,7 +172,7 @@ const SamplePage = () => {
   ] = useExportSamplesMutation();
 
   // Helper to build search request from current state
-  const buildSearchRequest = (): SampleSearchRequest => ({
+  const buildSearchRequest = useCallback((): SampleSearchRequest => ({
     page: paginationModel.page,
     pageSize: paginationModel.pageSize,
     sortModel: sortModel.map((sort) => ({
@@ -187,7 +187,7 @@ const SamplePage = () => {
       })),
       logicOperator: filterModel.logicOperator || "and",
     },
-  });
+  }), [paginationModel, sortModel, filterModel]);
 
   // Helper to build search request for exporting all records
   const buildSearchRequestForExport = (scope: string): SampleSearchRequest => {
@@ -217,7 +217,7 @@ const SamplePage = () => {
   // Load samples when pagination, sort, or filter changes
   useEffect(() => {
     searchSamples({ sampleSearchRequest: buildSearchRequest() });
-  }, [paginationModel, sortModel, filterModel, searchSamples]);
+  }, [buildSearchRequest, searchSamples]);
 
   // Update rowCount when search response changes
   useEffect(() => {
