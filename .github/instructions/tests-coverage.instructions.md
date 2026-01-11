@@ -193,7 +193,7 @@ pnpm test:coverage     # Ensure coverage thresholds are met
 
 ### Testing with Redux Store
 ```typescript
-import { renderWithProviders } from '../../test-utils';
+import { renderWithProviders } from '@/test-utils'; // Adjust path based on component location
 
 it('should interact with Redux store', () => {
   const { store } = renderWithProviders(<Component />);
@@ -245,4 +245,6 @@ The build pipeline includes:
 
 - Vitest Documentation: https://vitest.dev/
 - Testing Library: https://testing-library.com/
-- Test file examples in `src/components/SampleComponent/` and `src/store/themeSlice.test.ts`
+- Test file examples:
+  - Component test: `src/components/SampleComponent/SampleComponent.test.tsx`
+  - Redux slice test: `src/store/themeSlice.test.ts`
