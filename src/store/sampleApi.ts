@@ -131,7 +131,7 @@ export type ExportSamplesApiResponse =
 export type ExportSamplesApiArg = {
   sampleExportForm: SampleExportForm;
 };
-export type SampleTag = {
+export type Tag = {
   id?: number;
   name: string;
   description?: string;
@@ -145,7 +145,7 @@ export type Sample = {
   createdBy?: string;
   updatedAt?: string;
   updatedBy?: string;
-  tags?: SampleTag[];
+  tags?: Tag[];
 };
 export type ErrorResponse = {
   /** HTTP status code */
@@ -183,7 +183,6 @@ export type SortItem = {
 export type FilterItem = {
   field?: string;
   operator?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value?: any;
 };
 export type FilterModel = {
