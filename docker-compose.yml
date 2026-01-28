@@ -1,5 +1,7 @@
 name: starter-react-vite-test
 
 services:
-  app-prod:
-    image: tiogars/starter-react-vite:latest
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
