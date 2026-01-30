@@ -104,7 +104,7 @@ export type DeleteSampleApiResponse = unknown;
 export type DeleteSampleApiArg = {
   id: number;
 };
-export type GetAllSamplesApiResponse = /** status 200 OK */ Sample[];
+export type GetAllSamplesApiResponse = /** status 200 OK */ FindResponseSample;
 export type GetAllSamplesApiArg = void;
 export type CreateSampleApiResponse =
   /** status 200 Sample created successfully */ Sample;
@@ -165,6 +165,10 @@ export type SampleUpdateForm = {
   description?: string;
   active?: boolean;
   tagNames?: string[];
+};
+export type FindResponseSample = {
+  data?: Sample[];
+  count?: number;
 };
 export type SampleCreateForm = {
   name?: string;

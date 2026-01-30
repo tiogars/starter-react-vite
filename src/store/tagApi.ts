@@ -33,7 +33,7 @@ const injectedRtkApi = api
     overrideExisting: false,
   });
 export { injectedRtkApi as enhancedApi };
-export type GetAllTagsApiResponse = /** status 200 OK */ Tag;
+export type GetAllTagsApiResponse = /** status 200 OK */ FindResponse;
 export type GetAllTagsApiArg = void;
 export type CreateTagApiResponse = /** status 200 OK */ Tag;
 export type CreateTagApiArg = {
@@ -47,10 +47,9 @@ export type DeleteTagApiResponse = unknown;
 export type DeleteTagApiArg = {
   id: number;
 };
-export type Tag = {
-  id?: number;
-  name: string;
-  description?: string;
+export type FindResponse = {
+  data?: any[];
+  count?: number;
 };
 export type ErrorResponse = {
   /** HTTP status code */
@@ -63,6 +62,11 @@ export type ErrorResponse = {
   violations?: {
     [key: string]: string;
   };
+};
+export type Tag = {
+  id?: number;
+  name: string;
+  description?: string;
 };
 export const {
   useGetAllTagsQuery,
