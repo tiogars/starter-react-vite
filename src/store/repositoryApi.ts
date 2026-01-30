@@ -6,6 +6,34 @@ const injectedRtkApi = api
   })
   .injectEndpoints({
     endpoints: (build) => ({
+      getRepositoryById: build.query<
+        GetRepositoryByIdApiResponse,
+        GetRepositoryByIdApiArg
+      >({
+        query: (queryArg) => ({ url: `/repositories/${queryArg.id}` }),
+        providesTags: ["repository"],
+      }),
+      updateRepository: build.mutation<
+        UpdateRepositoryApiResponse,
+        UpdateRepositoryApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/repositories/${queryArg.id}`,
+          method: "PUT",
+          body: queryArg.repositoryUpdateForm,
+        }),
+        invalidatesTags: ["repository"],
+      }),
+      deleteRepository: build.mutation<
+        DeleteRepositoryApiResponse,
+        DeleteRepositoryApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/repositories/${queryArg.id}`,
+          method: "DELETE",
+        }),
+        invalidatesTags: ["repository"],
+      }),
       getAllRepositories: build.query<
         GetAllRepositoriesApiResponse,
         GetAllRepositoriesApiArg
@@ -20,24 +48,18 @@ const injectedRtkApi = api
         query: (queryArg) => ({
           url: `/repositories`,
           method: "POST",
-          body: queryArg.repository,
+          body: queryArg.repositoryCreateForm,
         }),
         invalidatesTags: ["repository"],
       }),
-      getRepositoryById: build.query<
-        GetRepositoryByIdApiResponse,
-        GetRepositoryByIdApiArg
-      >({
-        query: (queryArg) => ({ url: `/repositories/${queryArg.id}` }),
-        providesTags: ["repository"],
-      }),
-      deleteRepository: build.mutation<
-        DeleteRepositoryApiResponse,
-        DeleteRepositoryApiArg
+      searchRepositories: build.mutation<
+        SearchRepositoriesApiResponse,
+        SearchRepositoriesApiArg
       >({
         query: (queryArg) => ({
-          url: `/repositories/${queryArg.id}`,
-          method: "DELETE",
+          url: `/repositories/search`,
+          method: "POST",
+          body: queryArg.repositorySearchRequest,
         }),
         invalidatesTags: ["repository"],
       }),
@@ -45,24 +67,35 @@ const injectedRtkApi = api
     overrideExisting: false,
   });
 export { injectedRtkApi as enhancedApi };
-export type GetAllRepositoriesApiResponse = /** status 200 OK */ Repository;
-export type GetAllRepositoriesApiArg = void;
-export type CreateRepositoryApiResponse = /** status 200 OK */ Repository;
-export type CreateRepositoryApiArg = {
-  repository: Repository;
-};
 export type GetRepositoryByIdApiResponse = /** status 200 OK */ Repository;
 export type GetRepositoryByIdApiArg = {
   id: number;
+};
+export type UpdateRepositoryApiResponse = /** status 200 OK */ Repository;
+export type UpdateRepositoryApiArg = {
+  id: number;
+  repositoryUpdateForm: RepositoryUpdateForm;
 };
 export type DeleteRepositoryApiResponse = unknown;
 export type DeleteRepositoryApiArg = {
   id: number;
 };
+export type GetAllRepositoriesApiResponse = /** status 200 OK */ Repository;
+export type GetAllRepositoriesApiArg = void;
+export type CreateRepositoryApiResponse = /** status 200 OK */ Repository;
+export type CreateRepositoryApiArg = {
+  repositoryCreateForm: RepositoryCreateForm;
+};
+export type SearchRepositoriesApiResponse =
+  /** status 200 OK */ RepositorySearchResponse;
+export type SearchRepositoriesApiArg = {
+  repositorySearchRequest: RepositorySearchRequest;
+};
 export type Repository = {
   id?: number;
   name: string;
   url?: string;
+  description?: string;
 };
 export type ErrorResponse = {
   /** HTTP status code */
@@ -76,9 +109,26 @@ export type ErrorResponse = {
     [key: string]: string;
   };
 };
+export type RepositoryUpdateForm = {
+  name: string;
+  description?: string;
+};
+export type RepositoryCreateForm = {
+  name: string;
+  description?: string;
+};
+export type RepositorySearchResponse = {
+  items?: Repository[];
+  total?: number;
+};
+export type RepositorySearchRequest = {
+  name?: string;
+};
 export const {
+  useGetRepositoryByIdQuery,
+  useUpdateRepositoryMutation,
+  useDeleteRepositoryMutation,
   useGetAllRepositoriesQuery,
   useCreateRepositoryMutation,
-  useGetRepositoryByIdQuery,
-  useDeleteRepositoryMutation,
+  useSearchRepositoriesMutation,
 } = injectedRtkApi;
