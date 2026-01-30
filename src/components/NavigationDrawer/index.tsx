@@ -55,6 +55,7 @@ const DrawerContent = ({
     { text: "Routes", path: "/routes", icon: getIcon("routes") },
     { text: "Architecture", path: "/architecture", icon: getIcon("architecture") },
     { text: "Samples", path: "/samples", icon: getIcon("samples") },
+    { text: "Repositories", path: "/repositories", icon: getIcon("routes") },
   ];
 
   const settingsSubmenu = [

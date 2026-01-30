@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router';
 import Layout from '../components/Layout';
 import HomePage from '../pages/HomePage';
 import FeaturesPage from '../pages/FeaturesPage';
+import RepositoryPage from '../pages/RepositoryPage';
 import RoutePage from '../pages/Settings/RoutePage';
 import ErrorPage from '../pages/ErrorPage';
 import ArchitecturePage from '../pages/ArchitecturePage';
@@ -37,6 +38,10 @@ export const router = createBrowserRouter([
       {
         path: 'samples',
         element: <SamplePage />,
+      },
+      {
+        path: 'repositories',
+        element: <RepositoryPage />,
       },
       {
         path: 'settings',
