@@ -17,8 +17,8 @@ import {
 } from "@mui/material";
 import type { SampleCreateDialogProps } from "./SampleCreateDialog.types";
 import type { SampleCreateForm } from "../../store/sampleApi";
-import type { SampleTag } from "../../store/sampleTagApi";
-import { useGetAllTagsQuery } from "../../store/sampleTagApi";
+import type { Tag as SampleTag } from "../../store/tagApi";
+import { useGetAllTagsQuery } from "../../store/tagApi";
 
 export const SampleCreateDialog = (props: SampleCreateDialogProps) => {
   const {
@@ -69,7 +69,12 @@ export const SampleCreateDialog = (props: SampleCreateDialogProps) => {
 
   // Convert tag objects to names for autocomplete
   const tagOptions = useMemo(() => {
-    return (tagsData || []).map((tag: SampleTag) => tag.name || "");
+    const tagList = Array.isArray((tagsData as any)?.data)
+      ? (tagsData as any).data
+      : Array.isArray(tagsData)
+      ? tagsData
+      : [];
+    return tagList.map((tag: SampleTag) => tag.name || "");
   }, [tagsData]);
 
   return (

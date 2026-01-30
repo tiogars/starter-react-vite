@@ -52,45 +52,47 @@ export const useSampleGrid = ({
       flex: 1,
       minWidth: 200,
       valueGetter: (params) => {
-        if (!params?.row) {
+        const row = (params as { row: Sample }).row;
+        if (!row) {
           return [];
         }
-
-        if (Array.isArray(params.row.tags)) {
-          return params.row.tags;
+        if (Array.isArray(row.tags)) {
+          return row.tags;
         }
-
-        const tagNames = (params.row as unknown as { tagNames?: string[] }).tagNames;
+        const tagNames = (row as unknown as { tagNames?: string[] }).tagNames;
         if (Array.isArray(tagNames)) {
           return tagNames.map((name, index) => ({ id: `tag-${index}-${name}`, name }));
         }
-
         return [];
       },
       renderCell: (params) => (
         <Stack direction="row" spacing={0.5} flexWrap="wrap" useFlexGap>
-          {(Array.isArray(params.row?.tags)
-            ? params.row.tags
-            : Array.isArray((params.row as unknown as { tagNames?: string[] })?.tagNames)
-              ? (params.row as unknown as { tagNames?: string[] }).tagNames!.map((name, index) => ({
-                  id: `tag-${index}-${name}`,
-                  name,
-                }))
-              : [])
-            .map((tag: { id?: number | string; name: string }) => (
-              <Chip
-                key={tag.id || tag.name}
-                label={tag.name}
-                size="small"
-                variant="outlined"
-              />
-            ))}
-          {(!params.row?.tags || params.row.tags.length === 0) &&
-            (!((params.row as unknown as { tagNames?: string[] }).tagNames || []).length) && (
-              <Typography variant="caption" color="textSecondary">
-                No tags
-              </Typography>
-            )}
+          {(() => {
+            const row = (params as { row: Sample }).row;
+            let tags: { id?: number | string; name: string }[] = [];
+            if (Array.isArray(row?.tags)) {
+              tags = row.tags;
+            } else if (Array.isArray((row as unknown as { tagNames?: string[] })?.tagNames)) {
+              tags = (row as unknown as { tagNames?: string[] }).tagNames!.map((name, index) => ({
+                id: `tag-${index}-${name}`,
+                name,
+              }));
+            }
+            return tags.length > 0
+              ? tags.map((tag) => (
+                  <Chip
+                    key={tag.id || tag.name}
+                    label={tag.name}
+                    size="small"
+                    variant="outlined"
+                  />
+                ))
+              : (
+                  <Typography variant="caption" color="textSecondary">
+                    No tags
+                  </Typography>
+                );
+          })()}
         </Stack>
       ),
     },

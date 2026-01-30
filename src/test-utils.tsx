@@ -18,9 +18,9 @@ import themeReducer from './store/themeSlice';
 export function setupStore(preloadedState?: unknown) {
   return configureStore({
     reducer: {
-      [emptySplitApi.reducerPath]: emptySplitApi.reducer,
+      api: emptySplitApi.reducer,
       theme: themeReducer,
-    },
+    } as any,
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware().concat(emptySplitApi.middleware),
     preloadedState: preloadedState as never,

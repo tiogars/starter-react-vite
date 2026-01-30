@@ -7,10 +7,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderWithProviders, screen, userEvent, waitFor } from '../../test-utils';
 import { within } from '@testing-library/react';
 import { SampleCreateDialog } from './index';
-import * as sampleTagApi from '../../store/sampleTagApi';
+import * as tagApi from '../../store/tagApi';
 
 // Mock the RTK Query hook
-vi.mock('../../store/sampleTagApi', () => ({
+vi.mock('../../store/tagApi', () => ({
   useGetAllTagsQuery: vi.fn(),
 }));
 
@@ -23,20 +23,20 @@ describe('SampleCreateDialog', () => {
     onSubmit: mockOnSubmit,
     onCancel: mockOnCancel,
     submitting: false,
-    errorMessage: null,
-    violations: null,
+    errorMessage: undefined,
+    violations: undefined,
   };
 
   beforeEach(() => {
     vi.clearAllMocks();
     // Mock the tags query to return empty array by default
-    vi.mocked(sampleTagApi.useGetAllTagsQuery).mockReturnValue({
+    vi.mocked(tagApi.useGetAllTagsQuery).mockReturnValue({
       data: [],
       isLoading: false,
       isError: false,
       error: undefined,
       refetch: vi.fn(),
-    } as ReturnType<typeof sampleTagApi.useGetAllTagsQuery>);
+    } as ReturnType<typeof tagApi.useGetAllTagsQuery>);
   });
 
   describe('Dialog Visibility', () => {
@@ -191,13 +191,13 @@ describe('SampleCreateDialog', () => {
         { id: 2, name: 'Tag2' },
       ];
       
-      vi.mocked(sampleTagApi.useGetAllTagsQuery).mockReturnValue({
+      vi.mocked(tagApi.useGetAllTagsQuery).mockReturnValue({
         data: mockTags,
         isLoading: false,
         isError: false,
         error: undefined,
         refetch: vi.fn(),
-      } as ReturnType<typeof sampleTagApi.useGetAllTagsQuery>);
+      } as ReturnType<typeof tagApi.useGetAllTagsQuery>);
       
       renderWithProviders(<SampleCreateDialog {...defaultProps} />);
       const dialog = screen.getByRole('dialog');
@@ -206,13 +206,13 @@ describe('SampleCreateDialog', () => {
     });
 
     it('should handle tags loading state', () => {
-      vi.mocked(sampleTagApi.useGetAllTagsQuery).mockReturnValue({
+      vi.mocked(tagApi.useGetAllTagsQuery).mockReturnValue({
         data: undefined,
         isLoading: true,
         isError: false,
         error: undefined,
         refetch: vi.fn(),
-      } as ReturnType<typeof sampleTagApi.useGetAllTagsQuery>);
+      } as ReturnType<typeof tagApi.useGetAllTagsQuery>);
       
       renderWithProviders(<SampleCreateDialog {...defaultProps} />);
       const dialog = screen.getByRole('dialog');
