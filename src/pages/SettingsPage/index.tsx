@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router';
 import PaletteIcon from '@mui/icons-material/Palette';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import StorageIcon from '@mui/icons-material/Storage';
 
 export const SettingsPage = () => {
   const navigate = useNavigate();
@@ -22,6 +23,13 @@ export const SettingsPage = () => {
       icon: <PaletteIcon sx={{ fontSize: 48, color: 'primary.main' }} />,
       path: '/settings/theme',
       color: 'primary.main',
+    },
+    {
+      title: 'Configuration Settings',
+      description: 'View environment variables and application configuration information',
+      icon: <StorageIcon sx={{ fontSize: 48, color: 'success.main' }} />,
+      path: '/settings/config',
+      color: 'success.main',
     },
     // Future settings sections can be added here
   ];

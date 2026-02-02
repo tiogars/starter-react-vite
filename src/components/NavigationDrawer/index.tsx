@@ -60,6 +60,7 @@ const DrawerContent = ({
 
   const settingsSubmenu = [
     { text: "Theme", path: "/settings/theme", icon: getIcon("themeLight") },
+    { text: "Configuration", path: "/settings/config", icon: getIcon("settings") },
   ];
 
   return (
