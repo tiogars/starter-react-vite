@@ -1,9 +1,12 @@
 name: Release
 
 on:
-  push:
-    branches:
-      - main
+  # Running the workflow on push to main branch
+  # push:
+  #   branches:
+  #     - main
+  # Running the workflow on manual trigger
+  workflow_dispatch:
 
 jobs:
   release:
