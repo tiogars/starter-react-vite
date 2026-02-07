@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
-import RepositoryDataGrid from '../components/Repository/RepositoryDataGrid';
-import RepositoryCreateDialog from '../components/Repository/RepositoryCreateDialog';
-import RepositoryUpdateDialog from '../components/Repository/RepositoryUpdateDialog';
-import { Button, Box } from '@mui/material';
-import type { Repository } from '../components/Repository/Repository.types';
+import { useState } from "react";
+import { Box, Button } from "@mui/material";
+import RepositoryDataGrid from "../components/Repository/RepositoryDataGrid";
+import RepositoryCreateDialog from "../components/Repository/RepositoryCreateDialog";
+import RepositoryDeleteDialog from "../components/Repository/RepositoryDeleteDialog";
+import RepositoryUpdateDialog from "../components/Repository/RepositoryUpdateDialog";
+import type { Repository } from "../components/Repository/Repository.types";
 
-const RepositoryPage: React.FC = () => {
+export const RepositoryPage = () => {
   const [createOpen, setCreateOpen] = useState(false);
   const [updateOpen, setUpdateOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -23,13 +24,28 @@ const RepositoryPage: React.FC = () => {
 
   return (
     <Box p={2}>
-      <Button variant="contained" onClick={() => setCreateOpen(true)} sx={{ mb: 2 }}>
+      <Button
+        variant="contained"
+        onClick={() => setCreateOpen(true)}
+        sx={{ mb: 2 }}
+      >
         Create Repository
       </Button>
       <RepositoryDataGrid onEdit={handleEdit} onDelete={handleDelete} />
-      <RepositoryCreateDialog open={createOpen} onClose={() => setCreateOpen(false)} />
-      <RepositoryUpdateDialog open={updateOpen} onClose={() => setUpdateOpen(false)} repository={selected} />
-      {/* TODO: Implement DeleteConfirmDialog for repositories */}
+      <RepositoryCreateDialog
+        open={createOpen}
+        onClose={() => setCreateOpen(false)}
+      />
+      <RepositoryUpdateDialog
+        open={updateOpen}
+        onClose={() => setUpdateOpen(false)}
+        repository={selected}
+      />
+      <RepositoryDeleteDialog
+        open={deleteOpen}
+        onClose={() => setDeleteOpen(false)}
+        repository={selected}
+      />
     </Box>
   );
 };

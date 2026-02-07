@@ -11,20 +11,6 @@ services:
       - VITE_USE_MOCK_API=false
       - VITE_SWAGGER_URL=http://localhost:8080/swagger-ui/index.html
       - VITE_APP_NAME=Starter React Vite
-      - API_UPSTREAM=http://backend:8080
+      - API_UPSTREAM=http://localhost:8080
     ports:
       - "8181:80"
-
-  web-production:
-    image: ghcr.io/tiogars/starter-react-vite:latest
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
-    environment:
-      - VITE_API_URL=https://api.prod.example.com
-      - VITE_USE_MOCK_API=false
-      - VITE_SWAGGER_URL=https://api.prod.example.com/swagger-ui/index.html
-      - VITE_APP_NAME=Starter React Vite
-      - API_UPSTREAM=https://api.prod.example.com
-    ports:
-      - "8282:80"
