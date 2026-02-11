@@ -21,7 +21,7 @@ export default defineConfig(({ mode }) => {
   }
 
   const manualChunksMap: Record<string, string[]> = {
-    react: ['react', 'react-dom', 'react-router'],
+    react: ['react', 'react-dom', 'react-router', 'scheduler'],
     muiCore: ['@mui/material', '@emotion/react', '@emotion/styled'],
     muiIcons: ['@mui/icons-material'],
     muiDataGrid: ['@mui/x-data-grid'],
@@ -33,6 +33,9 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react()],
+    resolve: {
+      dedupe: ['react', 'react-dom'],
+    },
     // Split heavy vendor libraries to avoid oversized bundles in production.
     build: {
       rollupOptions: {

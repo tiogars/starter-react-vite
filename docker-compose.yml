@@ -2,10 +2,10 @@ name: starter-react-vite-test
 
 services:
   web:
-    image: ghcr.io/tiogars/starter-react-vite:latest
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
+    # image: ghcr.io/tiogars/starter-react-vite:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     environment:
       - VITE_API_URL=http://localhost:8080/api
       - VITE_USE_MOCK_API=false

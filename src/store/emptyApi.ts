@@ -2,11 +2,12 @@
 // Or from '@reduxjs/toolkit/query' if not using the auto-generated hooks
 import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import { getApiUrl } from '../utils/runtimeConfig'
 
 // Check if we're in development mode and if the API URL is available
 const isDevelopment = import.meta.env.MODE === 'development';
-// Use proxy in development, direct URL in production
-const apiUrl = isDevelopment ? '/api' : (import.meta.env.VITE_API_URL || 'http://localhost:8080');
+// Use proxy in development, runtime-configured URL in production
+const apiUrl = isDevelopment ? '/api' : getApiUrl();
 
 export const API_TIMEOUT_MS = 5000;
 
