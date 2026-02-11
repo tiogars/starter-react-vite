@@ -7,9 +7,6 @@ import '@fontsource/roboto/700.css';
 import App from './App.tsx'
 
 const boot = async () => {
-  if (import.meta.env.PROD) {
-    await import(/* @vite-ignore */ '/config.js')
-  }
 
   createRoot(document.getElementById('root')!).render(
     <StrictMode>

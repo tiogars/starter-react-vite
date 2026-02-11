@@ -8,6 +8,7 @@ import type { RenderOptions } from '@testing-library/react';
 import type { ReactElement } from 'react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
+import { vi } from 'vitest';
 import { emptySplitApi } from './store/emptyApi';
 import themeReducer from './store/themeSlice';
 
@@ -70,9 +71,6 @@ export function mockApiHook<T>(
   isLoading = false,
   error: unknown = null,
 ) {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { vi } = require('vitest');
-  
   return {
     data,
     isLoading,
@@ -102,9 +100,6 @@ export function mockApiHook<T>(
  * vi.mocked(useCreateSampleMutation).mockReturnValue([mutate, mockMutation]);
  */
 export function mockApiMutation<T = unknown>() {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { vi } = require('vitest');
-  
   const mutate = vi.fn().mockResolvedValue({
     data: {} as T,
   });
