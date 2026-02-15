@@ -12,7 +12,7 @@ const boot = async () => {
   if (redirect) {
     sessionStorage.removeItem('spa-redirect');
     // Use history API to navigate without reload
-    history.replaceState(null, '', redirect);
+    window.history.replaceState(null, '', redirect);
   }
 
   createRoot(document.getElementById('root')!).render(
