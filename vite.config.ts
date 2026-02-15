@@ -1,6 +1,8 @@
 import { defineConfig } from 'vitest/config'
 import { loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
+import { readFileSync } from 'fs'
+import { join } from 'path'
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
@@ -12,6 +14,11 @@ export default defineConfig(({ mode }) => {
   const VITE_API_URL = env.VITE_API_URL || process.env.VITE_API_URL
 
   const isDev = mode === 'development'
+
+  // Get repository name from package.json for GitHub Pages base path
+  const packageJson = JSON.parse(readFileSync(join(process.cwd(), 'package.json'), 'utf-8'))
+  const repoName = packageJson.name
+  const basePath = process.env.GITHUB_PAGES === 'true' ? `/${repoName}/` : '/'
 
   const escapeForRegex = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
   const matchesDependency = (id: string, pkg: string) => {
@@ -33,6 +40,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react()],
+    base: basePath,
     resolve: {
       dedupe: ['react', 'react-dom'],
     },
