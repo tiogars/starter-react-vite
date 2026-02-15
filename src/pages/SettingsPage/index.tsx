@@ -12,6 +12,7 @@ import PaletteIcon from '@mui/icons-material/Palette';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import StorageIcon from '@mui/icons-material/Storage';
+import ApiIcon from '@mui/icons-material/Api';
 
 export const SettingsPage = () => {
   const navigate = useNavigate();
@@ -23,6 +24,13 @@ export const SettingsPage = () => {
       icon: <PaletteIcon sx={{ fontSize: 48, color: 'primary.main' }} />,
       path: '/settings/theme',
       color: 'primary.main',
+    },
+    {
+      title: 'API Setup',
+      description: 'Configure the backend API endpoint for connecting to your services',
+      icon: <ApiIcon sx={{ fontSize: 48, color: 'info.main' }} />,
+      path: '/settings/api',
+      color: 'info.main',
     },
     {
       title: 'Configuration Settings',

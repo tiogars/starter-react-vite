@@ -30,8 +30,20 @@ export const getRuntimeConfig = (): RuntimeConfig => {
 
 /**
  * Get API URL for backend calls
+ * Priority: localStorage > runtime config > environment variable > default
  */
 export const getApiUrl = (): string => {
+  // First, check localStorage for user-configured API endpoint
+  try {
+    const storedApiUrl = localStorage.getItem('api-endpoint');
+    if (storedApiUrl) {
+      return storedApiUrl;
+    }
+  } catch {
+    // localStorage might not be available in some contexts
+  }
+
+  // Fall back to runtime config or environment variables
   const config = getRuntimeConfig();
   return config.VITE_API_URL || 'http://localhost:8080/api';
 };

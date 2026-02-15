@@ -1,13 +1,17 @@
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { useGetAlactuatorHealthQuery } from "../../store/actuatorApi";
+import { selectIsApiConfigured } from "../../store/apiConfigSlice";
 import "./ApiHealth.css";
 
 const ApiHealth = () => {
+  const isApiConfigured = useSelector(selectIsApiConfigured);
   const { data, error, isLoading, startedTimeStamp } =
     useGetAlactuatorHealthQuery(null, {
       pollingInterval: 10000, // Recheck every 10s
       refetchOnMountOrArgChange: true, // Reload on each mount
+      skip: !isApiConfigured, // Skip query if API is not configured
     });
 
   const [countdown, setCountdown] = useState(10);
@@ -25,7 +29,17 @@ const ApiHealth = () => {
   }, [startedTimeStamp]);
 
   let status: React.ReactNode;
-  if (isLoading) {
+  
+  if (!isApiConfigured) {
+    status = (
+      <span className="api-health-warning">
+        <FiberManualRecordIcon
+          sx={{ color: "warning.main", fontSize: 14, mr: 0.5 }}
+        />
+        API not configured
+      </span>
+    );
+  } else if (isLoading) {
     status = (
       <span>
         <FiberManualRecordIcon
@@ -66,7 +80,7 @@ const ApiHealth = () => {
   return (
     <div>
       {status}{" "}
-      {countdown <= 3 && countdown > 0 && `(next check in ${countdown}s)`}
+      {isApiConfigured && countdown <= 3 && countdown > 0 && `(next check in ${countdown}s)`}
     </div>
   );
 };
