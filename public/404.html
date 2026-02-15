@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Redirecting...</title>
+  <script>
+    // Single Page Apps for GitHub Pages SPA routing
+    // When GitHub Pages can't find a route, it serves this 404.html
+    // We store the attempted path and redirect to index.html
+    // The app will then restore the correct route using client-side routing
+    
+    // Extract the base path (e.g., /starter-react-vite/)
+    const segments = location.pathname.split('/').filter(Boolean);
+    const basePath = segments.length > 0 ? '/' + segments[0] + '/' : '/';
+    
+    // Store the full path for the app to restore
+    sessionStorage.setItem(
+      'spa-redirect',
+      location.pathname + location.search + location.hash
+    );
+    
+    // Redirect to the base path (index.html)
+    location.replace(location.origin + basePath);
+  </script>
+</head>
+<body>
+  <p>Redirecting...</p>
+</body>
+</html>

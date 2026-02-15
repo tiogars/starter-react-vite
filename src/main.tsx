@@ -7,6 +7,13 @@ import '@fontsource/roboto/700.css';
 import App from './App.tsx'
 
 const boot = async () => {
+  // Handle redirect from 404.html for GitHub Pages SPA routing
+  const redirect = sessionStorage.getItem('spa-redirect');
+  if (redirect) {
+    sessionStorage.removeItem('spa-redirect');
+    // Use history API to navigate without reload
+    history.replaceState(null, '', redirect);
+  }
 
   createRoot(document.getElementById('root')!).render(
     <StrictMode>
