@@ -8,7 +8,7 @@ import ApiSetupPage from './index';
 import apiConfigReducer from '../../../store/apiConfigSlice';
 
 // Mock fetch
-global.fetch = vi.fn();
+(globalThis as any).fetch = vi.fn();
 
 const createMockStore = (initialState = {}) => {
   return configureStore({
@@ -84,7 +84,7 @@ describe('ApiSetupPage', () => {
       await user.click(saveButton);
       
       await waitFor(() => {
-        expect(screen.getByText(/Success/i)).toBeInTheDocument();
+        expect(screen.getByText('API endpoint has been saved successfully!')).toBeInTheDocument();
       });
     });
 
@@ -99,7 +99,7 @@ describe('ApiSetupPage', () => {
       await user.click(saveButton);
       
       await waitFor(() => {
-        expect(screen.getByText(/Success/i)).toBeInTheDocument();
+        expect(screen.getByText('API endpoint has been saved successfully!')).toBeInTheDocument();
       });
     });
   });
@@ -138,7 +138,7 @@ describe('ApiSetupPage', () => {
 
   describe('Connection Testing', () => {
     it('should test connection successfully', async () => {
-      (global.fetch as any).mockResolvedValueOnce({
+      (globalThis.fetch as any).mockResolvedValueOnce({
         ok: true,
         status: 200,
       });
@@ -153,12 +153,12 @@ describe('ApiSetupPage', () => {
       await user.click(testButton);
       
       await waitFor(() => {
-        expect(screen.getByText(/Success/i)).toBeInTheDocument();
+        expect(screen.getByText('API endpoint has been saved successfully!')).toBeInTheDocument();
       });
     });
 
     it('should handle connection test failure', async () => {
-      (global.fetch as any).mockResolvedValueOnce({
+      (globalThis.fetch as any).mockResolvedValueOnce({
         ok: false,
         status: 404,
       });

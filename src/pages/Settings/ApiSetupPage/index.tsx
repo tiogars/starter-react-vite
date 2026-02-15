@@ -22,7 +22,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import { setApiUrl, clearApiUrl, selectApiUrl, selectIsApiConfigured } from '../../../store/apiConfigSlice';
 import type { ApiSetupPageProps } from './ApiSetupPage.types';
 
-export const ApiSetupPage = (props: ApiSetupPageProps) => {
+export const ApiSetupPage = (_props: ApiSetupPageProps) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const currentApiUrl = useSelector(selectApiUrl);
