@@ -39,3 +39,14 @@ To build the app for GitHub Pages locally:
 GITHUB_PAGES=true pnpm run build
 ```
 
+### SPA Routing on GitHub Pages
+
+This application uses client-side routing with React Router. To support direct navigation to any route and page refreshes, a `404.html` fallback is included:
+
+- When a user navigates to a route (e.g., `/starter-react-vite/features`), GitHub Pages serves the `404.html` file
+- The 404.html script stores the requested path and redirects to the base URL
+- The application then restores the correct route using the History API
+- React Router handles the routing as usual
+
+This is a standard pattern for SPAs deployed on GitHub Pages.
+
