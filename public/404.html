@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Redirecting...</title>
+  <script>
+    // Single Page Apps for GitHub Pages SPA routing
+    // When GitHub Pages can't find a route, it serves this 404.html
+    // We store the attempted path and redirect to index.html
+    // The app will then restore the correct route using client-side routing
+    
+    // For GitHub Pages project sites (username.github.io/repo-name/),
+    // the base path is /repo-name/
+    // For user/org sites (username.github.io/), the base path is /
+    // We detect this by checking if we're on a project site
+    const pathSegments = location.pathname.split('/').filter(Boolean);
+    const hostname = location.hostname;
+    
+    // User/org sites: username.github.io or custom domain
+    // Project sites: username.github.io/project-name
+    let basePath = '/';
+    if (hostname.endsWith('.github.io') && pathSegments.length > 0) {
+      // Check if first segment looks like a project name (not a route)
+      // Project names typically don't have file extensions or common route patterns
+      const firstSegment = pathSegments[0];
+      if (!firstSegment.includes('.') && firstSegment !== 'api') {
+        basePath = '/' + firstSegment + '/';
+      }
+    }
+    
+    // Store the full path for the app to restore
+    sessionStorage.setItem(
+      'spa-redirect',
+      location.pathname + location.search + location.hash
+    );
+    
+    // Redirect to the base path (index.html)
+    location.replace(location.origin + basePath);
+  </script>
+</head>
+<body>
+  <p>Redirecting...</p>
+</body>
+</html>
