@@ -152,6 +152,7 @@ describe('ApiSetupPage', () => {
       const testButton = screen.getByRole('button', { name: /Test Connection/i });
       await user.click(testButton);
       
+      // Both save and test connection use the same success state/message
       await waitFor(() => {
         expect(screen.getByText('API endpoint has been saved successfully!')).toBeInTheDocument();
       });

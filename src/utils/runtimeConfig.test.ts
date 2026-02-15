@@ -24,8 +24,22 @@ describe('runtimeConfig', () => {
     });
 
     it('should handle localStorage errors gracefully', () => {
-      // Test that function doesn't throw when localStorage is unavailable
+      // Mock localStorage to throw an error
+      const originalGetItem = Storage.prototype.getItem;
+      Storage.prototype.getItem = () => {
+        throw new Error('localStorage unavailable');
+      };
+
+      // Test that function doesn't throw when localStorage fails
       expect(() => getApiUrl()).not.toThrow();
+      
+      // Should return a valid URL even when localStorage fails
+      const apiUrl = getApiUrl();
+      expect(apiUrl).toBeDefined();
+      expect(typeof apiUrl).toBe('string');
+
+      // Restore original
+      Storage.prototype.getItem = originalGetItem;
     });
   });
 

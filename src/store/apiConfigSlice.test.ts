@@ -14,14 +14,13 @@ describe('apiConfigSlice', () => {
       expect(state.isConfigured).toBe(false);
     });
 
-    it('should use localStorage value when setting API URL', () => {
+    it('should persist API URL to localStorage when action is dispatched', () => {
       const initialState = { apiUrl: null, isConfigured: false };
       
       // Set a value in localStorage first
       localStorage.setItem('api-endpoint', 'http://localhost:8080/api');
       
-      // When the slice initializes or when we reload, it should use the stored value
-      // We can verify this by dispatching an action and seeing it persists
+      // When we dispatch setApiUrl action, it should persist to localStorage
       const state = apiConfigReducer(initialState, { type: 'apiConfig/setApiUrl', payload: 'http://localhost:8080/api' });
       
       expect(state.apiUrl).toBe('http://localhost:8080/api');

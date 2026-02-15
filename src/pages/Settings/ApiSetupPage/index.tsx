@@ -87,10 +87,16 @@ export const ApiSetupPage = (_props: ApiSetupPageProps) => {
       const cleanUrl = apiUrl.trim().replace(/\/$/, '');
       const testUrl = `${cleanUrl}/actuator/health`;
       
+      // Create AbortController for timeout (wider browser support)
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+      
       const response = await fetch(testUrl, {
         method: 'GET',
-        signal: AbortSignal.timeout(5000),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       if (response.ok) {
         setSuccess(true);
