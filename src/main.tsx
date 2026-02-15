@@ -11,8 +11,21 @@ const boot = async () => {
   const redirect = sessionStorage.getItem('spa-redirect');
   if (redirect) {
     sessionStorage.removeItem('spa-redirect');
-    // Use history API to navigate without reload
-    window.history.replaceState(null, '', redirect);
+    
+    // Validate the redirect path for security:
+    // - Must be a relative path (starts with /)
+    // - Must not contain protocol (http://, https://, //, etc.)
+    // - Must not contain backslashes or encoded characters that could bypass checks
+    if (
+      typeof redirect === 'string' &&
+      redirect.startsWith('/') &&
+      !redirect.includes('://') &&
+      !redirect.startsWith('//') &&
+      !redirect.includes('\\')
+    ) {
+      // Use history API to navigate without reload
+      window.history.replaceState(null, '', redirect);
+    }
   }
 
   createRoot(document.getElementById('root')!).render(
