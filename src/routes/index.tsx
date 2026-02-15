@@ -14,6 +14,9 @@ import ThemeLightOnlyPage from '../pages/ThemeLightOnlyPage';
 import ThemeDarkOnlyPage from '../pages/ThemeDarkOnlyPage';
 import ThemeSwitchablePage from '../pages/ThemeSwitchablePage';
 
+// Get the base path from Vite's base configuration
+const basename = import.meta.env.BASE_URL;
+
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -70,4 +73,4 @@ export const router = createBrowserRouter([
       },
     ],
   },
-]);
+], { basename });

@@ -33,6 +33,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react()],
+    base: process.env.GITHUB_PAGES === 'true' ? '/starter-react-vite/' : '/',
     resolve: {
       dedupe: ['react', 'react-dom'],
     },
