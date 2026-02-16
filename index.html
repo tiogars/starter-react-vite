@@ -7,7 +7,21 @@
     <title>starter-react-vite</title>
   </head>
   <body>
-    <div id="root"></div>
+    <noscript>
+      <div style="padding: 20px; text-align: center; font-family: sans-serif;">
+        <h1>JavaScript Required</h1>
+        <p>This application requires JavaScript to run. Please enable JavaScript in your browser settings and reload the page.</p>
+      </div>
+    </noscript>
+    <div id="root">
+      <div style="display: flex; justify-content: center; align-items: center; min-height: 100vh; font-family: sans-serif; color: #666;">
+        <div style="text-align: center;">
+          <div style="font-size: 48px; margin-bottom: 16px;">⏳</div>
+          <div>Loading application...</div>
+          <div style="font-size: 12px; margin-top: 8px; color: #999;">If this message persists, try clearing your browser cache (Ctrl+Shift+Delete or Cmd+Shift+Delete)</div>
+        </div>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
