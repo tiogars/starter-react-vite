@@ -20,48 +20,14 @@ export default defineConfig(({ mode }) => {
   const repoName = packageJson.name
   const basePath = process.env.GITHUB_PAGES === 'true' ? `/${repoName}/` : '/'
 
-  const escapeForRegex = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-  const matchesDependency = (id: string, pkg: string) => {
-    const escaped = escapeForRegex(pkg).replace(/\\\//g, '[\\\\/]')
-    const pattern = new RegExp(`[\\\\/]node_modules[\\\\/](?:\\.pnpm[\\\\/])?${escaped}[\\\\/]`)
-    return pattern.test(id)
-  }
-
-  const manualChunksMap: Record<string, string[]> = {
-    react: ['react', 'react-dom', 'react-router', 'scheduler'],
-    muiCore: ['@mui/material', '@emotion/react', '@emotion/styled'],
-    muiIcons: ['@mui/icons-material'],
-    muiDataGrid: ['@mui/x-data-grid'],
-    muiPickers: ['@mui/x-date-pickers'],
-    redux: ['@reduxjs/toolkit', 'react-redux'],
-    forms: ['react-hook-form'],
-    dates: ['luxon'],
-  }
-
   return {
     plugins: [react()],
     base: basePath,
     resolve: {
       dedupe: ['react', 'react-dom'],
     },
-    // Split heavy vendor libraries to avoid oversized bundles in production.
     build: {
-      rollupOptions: {
-        output: {
-          manualChunks: (id) => {
-            if (!id.includes('node_modules')) return undefined
-
-            const match = Object.entries(manualChunksMap).find(([, packages]) =>
-              packages.some((pkg) => matchesDependency(id, pkg)),
-            )
-
-            if (match) return match[0]
-
-            return 'vendor'
-          },
-        },
-      },
-      chunkSizeWarningLimit: 900,
+      chunkSizeWarningLimit: 1000,
     },
     // Enable Vite dev server proxy only during development.
     // Production build served by nginx will use the runtime reverse-proxy instead.
