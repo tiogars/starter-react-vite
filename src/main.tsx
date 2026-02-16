@@ -46,22 +46,51 @@ const boot = async () => {
     console.error('Failed to boot application:', error);
     const rootElement = document.getElementById('root');
     if (rootElement) {
-      rootElement.innerHTML = `
-        <div style="padding: 20px; text-align: center; font-family: sans-serif;">
-          <h1 style="color: #d32f2f;">Application Error</h1>
-          <p>Failed to load the application. Please try the following:</p>
-          <ul style="text-align: left; display: inline-block; margin: 20px auto;">
-            <li>Clear your browser cache (Ctrl+Shift+Delete or Cmd+Shift+Delete)</li>
-            <li>Reload the page (Ctrl+R or Cmd+R)</li>
-            <li>Try opening the page in an incognito/private window</li>
-            <li>Make sure JavaScript is enabled in your browser</li>
-          </ul>
-          <details style="margin-top: 20px; text-align: left; max-width: 600px; margin: 20px auto;">
-            <summary style="cursor: pointer; color: #1976d2;">Technical Details</summary>
-            <pre style="background: #f5f5f5; padding: 10px; overflow: auto; text-align: left;">${error instanceof Error ? error.message : String(error)}</pre>
-          </details>
-        </div>
-      `;
+      // Create error UI using DOM manipulation to avoid XSS vulnerabilities
+      const errorContainer = document.createElement('div');
+      errorContainer.style.cssText = 'padding: 20px; text-align: center; font-family: sans-serif;';
+      
+      const title = document.createElement('h1');
+      title.style.color = '#d32f2f';
+      title.textContent = 'Application Error';
+      errorContainer.appendChild(title);
+      
+      const message = document.createElement('p');
+      message.textContent = 'Failed to load the application. Please try the following:';
+      errorContainer.appendChild(message);
+      
+      const list = document.createElement('ul');
+      list.style.cssText = 'text-align: left; display: inline-block; margin: 20px auto;';
+      const steps = [
+        'Clear your browser cache (Ctrl+Shift+Delete or Cmd+Shift+Delete)',
+        'Reload the page (Ctrl+R or Cmd+R)',
+        'Try opening the page in an incognito/private window',
+        'Make sure JavaScript is enabled in your browser'
+      ];
+      steps.forEach(step => {
+        const li = document.createElement('li');
+        li.textContent = step;
+        list.appendChild(li);
+      });
+      errorContainer.appendChild(list);
+      
+      const details = document.createElement('details');
+      details.style.cssText = 'margin-top: 20px; text-align: left; max-width: 600px; margin: 20px auto;';
+      
+      const summary = document.createElement('summary');
+      summary.style.cssText = 'cursor: pointer; color: #1976d2;';
+      summary.textContent = 'Technical Details';
+      details.appendChild(summary);
+      
+      const pre = document.createElement('pre');
+      pre.style.cssText = 'background: #f5f5f5; padding: 10px; overflow: auto; text-align: left;';
+      pre.textContent = error instanceof Error ? error.message : String(error);
+      details.appendChild(pre);
+      
+      errorContainer.appendChild(details);
+      
+      rootElement.innerHTML = '';
+      rootElement.appendChild(errorContainer);
     }
   }
 }
