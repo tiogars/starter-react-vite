@@ -10,6 +10,7 @@ import SamplePage from '../pages/SamplePage';
 import SettingsPage from '../pages/SettingsPage';
 import ThemeSettingsPage from '../pages/Settings/ThemeSettingsPage';
 import ConfigSettingsPage from '../pages/Settings/ConfigSettingsPage';
+import ApiSetupPage from '../pages/Settings/ApiSetupPage';
 import ThemeLightOnlyPage from '../pages/ThemeLightOnlyPage';
 import ThemeDarkOnlyPage from '../pages/ThemeDarkOnlyPage';
 import ThemeSwitchablePage from '../pages/ThemeSwitchablePage';
@@ -58,6 +59,10 @@ export const router = createBrowserRouter([
       {
         path: 'settings/config',
         element: <ConfigSettingsPage />,
+      },
+      {
+        path: 'settings/api',
+        element: <ApiSetupPage />,
       },
       {
         path: 'theme-light',

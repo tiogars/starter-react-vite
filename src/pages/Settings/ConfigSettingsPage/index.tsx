@@ -17,6 +17,7 @@ import {
   Tooltip,
 } from '@mui/material';
 import { useNavigate } from 'react-router';
+import { useSelector } from 'react-redux';
 import BasicPage from '../../../components/BasicPage';
 import SettingsIcon from '@mui/icons-material/Settings';
 import StorageIcon from '@mui/icons-material/Storage';
@@ -25,18 +26,27 @@ import ApiIcon from '@mui/icons-material/Api';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { useState } from 'react';
 import type { ConfigItem, ConfigSectionType } from './ConfigSettingsPage.types';
+import { selectApiUrl, selectIsApiConfigured } from '../../../store/apiConfigSlice';
 
 export const ConfigSettingsPage = () => {
   const navigate = useNavigate();
   const [copied, setCopied] = useState<string | null>(null);
+  const userConfiguredApiUrl = useSelector(selectApiUrl);
+  const isApiConfigured = useSelector(selectIsApiConfigured);
 
   // Collect environment information
   const configItems: ConfigItem[] = [
     // API Configuration
     {
+      key: 'User Configured API URL',
+      value: userConfiguredApiUrl || 'Not configured',
+      description: 'User-configured API endpoint from localStorage (highest priority)',
+      section: 'api',
+    },
+    {
       key: 'VITE_API_URL',
       value: import.meta.env.VITE_API_URL,
-      description: 'Backend API base URL',
+      description: 'Backend API base URL from environment',
       section: 'api',
     },
     {
@@ -163,7 +173,7 @@ export const ConfigSettingsPage = () => {
       <Alert severity="info">
         <AlertTitle>Environment Information</AlertTitle>
         All configuration values displayed here are from the current environment. Some values may be hidden 
-        for security reasons.
+        for security reasons. {isApiConfigured && 'Note: A user-configured API endpoint is currently active.'}
       </Alert>
 
       {/* Configuration Sections */}
