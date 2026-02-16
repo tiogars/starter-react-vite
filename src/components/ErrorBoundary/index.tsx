@@ -91,7 +91,7 @@ class ErrorBoundary extends Component<Props, State> {
                 Reload Application
               </Button>
 
-              {this.state.error && (
+              {this.state.error && import.meta.env.DEV && (
                 <Box
                   sx={{
                     mt: 3,
@@ -103,7 +103,7 @@ class ErrorBoundary extends Component<Props, State> {
                   }}
                 >
                   <Typography variant="caption" component="div" sx={{ fontWeight: 'bold', mb: 1 }}>
-                    Technical Details:
+                    Technical Details (Development Only):
                   </Typography>
                   <Typography
                     variant="caption"
@@ -122,6 +122,23 @@ class ErrorBoundary extends Component<Props, State> {
                         {this.state.errorInfo.componentStack}
                       </>
                     )}
+                  </Typography>
+                </Box>
+              )}
+              {this.state.error && !import.meta.env.DEV && (
+                <Box
+                  sx={{
+                    mt: 3,
+                    p: 2,
+                    bgcolor: 'info.light',
+                    borderRadius: 1,
+                    border: '1px solid',
+                    borderColor: 'info.main'
+                  }}
+                >
+                  <Typography variant="caption" component="div">
+                    An error occurred. For privacy and security reasons, technical details are not shown in production mode.
+                    Please check the browser console or contact support if the issue persists.
                   </Typography>
                 </Box>
               )}

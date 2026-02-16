@@ -74,23 +74,30 @@ const boot = async () => {
       });
       errorContainer.appendChild(list);
       
-      const details = document.createElement('details');
-      details.style.cssText = 'margin-top: 20px; text-align: left; max-width: 600px; margin: 20px auto;';
+      // Only show technical details in development mode
+      if (import.meta.env.DEV) {
+        const details = document.createElement('details');
+        details.style.cssText = 'margin-top: 20px; text-align: left; max-width: 600px; margin: 20px auto;';
+        
+        const summary = document.createElement('summary');
+        summary.style.cssText = 'cursor: pointer; color: #1976d2;';
+        summary.textContent = 'Technical Details (Development Only)';
+        details.appendChild(summary);
+        
+        const pre = document.createElement('pre');
+        pre.style.cssText = 'background: #f5f5f5; padding: 10px; overflow: auto; text-align: left;';
+        pre.textContent = error instanceof Error ? error.message : String(error);
+        details.appendChild(pre);
+        
+        errorContainer.appendChild(details);
+      } else {
+        const prodMessage = document.createElement('p');
+        prodMessage.style.cssText = 'margin-top: 20px; padding: 12px; background: #e3f2fd; border-radius: 4px; font-size: 14px; color: #1565c0;';
+        prodMessage.textContent = 'For privacy and security reasons, technical details are not shown in production mode. Please check the browser console or contact support if the issue persists.';
+        errorContainer.appendChild(prodMessage);
+      }
       
-      const summary = document.createElement('summary');
-      summary.style.cssText = 'cursor: pointer; color: #1976d2;';
-      summary.textContent = 'Technical Details';
-      details.appendChild(summary);
-      
-      const pre = document.createElement('pre');
-      pre.style.cssText = 'background: #f5f5f5; padding: 10px; overflow: auto; text-align: left;';
-      pre.textContent = error instanceof Error ? error.message : String(error);
-      details.appendChild(pre);
-      
-      errorContainer.appendChild(details);
-      
-      rootElement.innerHTML = '';
-      rootElement.appendChild(errorContainer);
+      rootElement.replaceChildren(errorContainer);
     }
   }
 }
