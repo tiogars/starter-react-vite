@@ -60,4 +60,3 @@ This application uses client-side routing with React Router. To support direct n
 
 This is a standard pattern for SPAs deployed on GitHub Pages.
 
-
