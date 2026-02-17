@@ -18,7 +18,11 @@ export default defineConfig(({ mode }) => {
   // Get repository name from package.json for GitHub Pages base path
   const packageJson = JSON.parse(readFileSync(join(process.cwd(), 'package.json'), 'utf-8'))
   const repoName = packageJson.name
-  const basePath = process.env.GITHUB_PAGES === 'true' ? `/${repoName}/` : '/'
+  const isGitHubPages = process.env.GITHUB_PAGES === 'true'
+  const basePath = isGitHubPages ? `/${repoName}/` : '/'
+  
+  console.log(`Building for ${isGitHubPages ? 'GitHub Pages' : 'standard deployment'}`)
+  console.log(`Base path: ${basePath}`)
 
   return {
     plugins: [react()],
