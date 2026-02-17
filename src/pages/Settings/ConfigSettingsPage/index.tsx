@@ -40,7 +40,7 @@ export const ConfigSettingsPage = () => {
     {
       key: 'User Configured API URL',
       value: userConfiguredApiUrl || 'Not configured',
-      description: 'User-configured API endpoint from localStorage (highest priority)',
+      description: 'User-configured API endpoint from localStorage (overrides environment variables)',
       section: 'api',
     },
     {
