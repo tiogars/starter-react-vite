@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { getApiUrl, getRuntimeConfig } from './runtimeConfig';
+import { getApiUrl } from './runtimeConfig';
 
 describe('runtimeConfig', () => {
   beforeEach(() => {
@@ -40,14 +40,6 @@ describe('runtimeConfig', () => {
 
       // Restore original
       Storage.prototype.getItem = originalGetItem;
-    });
-  });
-
-  describe('getRuntimeConfig', () => {
-    it('should return a config object', () => {
-      const config = getRuntimeConfig();
-      expect(config).toBeDefined();
-      expect(typeof config).toBe('object');
     });
   });
 });

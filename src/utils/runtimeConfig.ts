@@ -5,25 +5,6 @@
  * Uses Vite's built-in environment variable system (import.meta.env).
  */
 
-interface RuntimeConfig {
-  VITE_API_URL?: string;
-  VITE_USE_MOCK_API?: boolean;
-  VITE_SWAGGER_URL?: string;
-  VITE_APP_NAME?: string;
-}
-
-/**
- * Get configuration from environment variables
- */
-export const getRuntimeConfig = (): RuntimeConfig => {
-  return {
-    VITE_API_URL: import.meta.env.VITE_API_URL,
-    VITE_USE_MOCK_API: import.meta.env.VITE_USE_MOCK_API === 'true',
-    VITE_SWAGGER_URL: import.meta.env.VITE_SWAGGER_URL,
-    VITE_APP_NAME: import.meta.env.VITE_APP_NAME,
-  };
-};
-
 /**
  * Get API URL for backend calls
  * Priority: localStorage > environment variable > default
@@ -56,5 +37,3 @@ export const useMockApi = (): boolean => {
 export const getAppName = (): string => {
   return import.meta.env.VITE_APP_NAME || 'Starter React Vite';
 };
-
-export default getRuntimeConfig;
