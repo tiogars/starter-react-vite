@@ -1,0 +1,92 @@
+site_name: Starter React Vite
+site_description: Documentation for the Starter React Vite application — a production-ready React template featuring MUI, React Hook Form, MUI X DataGrid, Redux Toolkit and RTK Query.
+site_author: tiogars
+site_url: https://tiogars.github.io/starter-react-vite/docs/
+repo_name: tiogars/starter-react-vite
+repo_url: https://github.com/tiogars/starter-react-vite
+
+docs_dir: docs
+site_dir: site
+
+theme:
+  name: material
+  language: en
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: blue
+      accent: pink
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: blue
+      accent: pink
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  font:
+    text: Roboto
+    code: Roboto Mono
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+    - toc.follow
+  icon:
+    repo: fontawesome/brands/github
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Getting Started:
+      - Installation: getting-started/installation.md
+      - Quick Start: getting-started/quick-start.md
+  - Features:
+      - Overview: features/overview.md
+      - Sample Management: features/sample-management.md
+      - Data Export & Import: features/data-export-import.md
+      - Theme System: features/theme-system.md
+  - Technical Review:
+      - Architecture: technical/architecture.md
+      - React Hook Form: technical/react-hook-forms.md
+      - MUI DataGrid: technical/mui-datagrid.md
+  - Deployment: deployment.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/tiogars/starter-react-vite
+  version:
+    provider: mike
